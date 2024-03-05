@@ -5,10 +5,8 @@ import com.example.jobapplication.Job.JobService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
 @Service
 public class JobServiceImpl implements JobService {
     private final List<Job> jobs = new ArrayList<>();
@@ -46,7 +44,17 @@ public class JobServiceImpl implements JobService {
     }
     @Override
     public boolean deleteJob(int id) {
-        return jobs.removeIf(job -> job.getId() == id);
+
+        /*return jobs.removeIf(job -> job.getId() == id);*/ //Lambda Expression to Delete job by id
+        Iterator<Job> iterator = jobs.iterator();    //deleted job by id using Iterator
+        while(iterator.hasNext()){
+            Job job = iterator.next();
+            if(job.getId()==id){
+                iterator.remove();
+                return true;
+            }
+        }
+        return false;
     }
     @Override
     public boolean updateJob(int id, @RequestBody Job updatedJob) {
