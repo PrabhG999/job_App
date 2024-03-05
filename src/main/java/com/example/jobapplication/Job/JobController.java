@@ -48,7 +48,7 @@ public class JobController {
     public ResponseEntity<String> deleteJob(@PathVariable int id) {
         boolean isDeleted = jobService.deleteJob(id);
         if (isDeleted) {
-            return new ResponseEntity<>("The Job is deleted Suscessfully",
+            return new ResponseEntity<>("The Job is deleted Successfully",
                     HttpStatus.OK);
         }
         return new ResponseEntity<>("Job Was Not Deleted , Please check the ID exists or not",
