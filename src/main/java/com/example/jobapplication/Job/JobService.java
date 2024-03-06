@@ -7,10 +7,9 @@ import java.util.List;
 
 public interface JobService {
 
-
     public List<Job> findAll();
 
-    public List<Job> getJobById(int id);
+    public Job getJobById(int id);
 
     public boolean addJob(@RequestBody Job job);
 
@@ -18,6 +17,6 @@ public interface JobService {
 
     public boolean updateJob(int id, @RequestBody Job updatedJob);
 
-    public List<Job> fetchJob(int id, String title);
+    public Job fetchJob(int id, String title);
 }
 

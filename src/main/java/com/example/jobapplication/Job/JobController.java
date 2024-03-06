@@ -9,7 +9,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/jobs")
 public class JobController {
-    private JobService jobService; //object of challenge service creating a dependency injection using Spring IOC
+    private final JobService jobService; //object of challenge service creating a dependency injection using Spring IOC
 
     public JobController(JobService jobService) {
         this.jobService = jobService;
@@ -22,8 +22,8 @@ public class JobController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<Job>> findAll(@PathVariable int id) {
-        List<Job> getJobById = jobService.getJobById(id);
+    public ResponseEntity<Job> findAll(@PathVariable int id) {
+        Job getJobById = jobService.getJobById(id);
         if (getJobById != null) {
             return new ResponseEntity<>(getJobById,
                     HttpStatus.OK);
@@ -65,10 +65,10 @@ public class JobController {
         }
     }
     @GetMapping("/{id}/{title}")
-    public ResponseEntity<List<Job>> fetchJob(@PathVariable int id, @PathVariable String title){
-        List<Job> fetchJob = jobService.fetchJob(id, title);
+    public ResponseEntity<Job> fetchJob(@PathVariable int id, @PathVariable String title){
+        Job fetchJob = jobService.fetchJob(id, title);
 
-        if(fetchJob!= null && !fetchJob.isEmpty()){
+        if(fetchJob!= null){
             return new ResponseEntity<>(fetchJob,HttpStatus.OK);
         }else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
