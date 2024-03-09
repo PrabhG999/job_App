@@ -3,8 +3,8 @@ package com.example.jobapplication.Job;
 import jakarta.persistence.*;
 
 @Entity
-//class supposed to be mapped to a table , the table name is same as class , male constructor and set primary key.
-@Table(name = "Job_Table")
+//class supposed to be mapped to a table , the table name is same as class , make constructor and set primary key.
+@Table(name = "Job")
 public class Job {
     //info we need to store for the JOB + Contractor and then getter setters
     @Id
