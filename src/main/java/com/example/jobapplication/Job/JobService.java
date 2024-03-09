@@ -18,5 +18,7 @@ public interface JobService {
     public boolean updateJob(int id, @RequestBody Job updatedJob);
 
     public Job fetchJob(int id, String title);
+
+    public  boolean patchJob(int id, @RequestBody Job patchJob);
 }
 

@@ -74,4 +74,13 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> patchJob(@PathVariable int id,@RequestBody Job patchJob){
+        boolean isPatched = jobService.patchJob(id,patchJob);
+        if(isPatched){
+            return new  ResponseEntity<>("Job Patched Successfully", HttpStatus.OK);
+        }else{
+            return new  ResponseEntity<>("Job Was Not Updated",HttpStatus.BAD_REQUEST);
+        }
+    }
 }
