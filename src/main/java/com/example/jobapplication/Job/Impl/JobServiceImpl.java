@@ -3,6 +3,7 @@ package com.example.jobapplication.Job.Impl;
 import com.example.jobapplication.Job.Job;
 import com.example.jobapplication.Job.JobRepository;
 import com.example.jobapplication.Job.JobService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -13,6 +14,7 @@ public class JobServiceImpl implements JobService {
     //private final List<Job> jobs = new ArrayList<>(); //disable array list bcs we making JPA methods
     //define repo obj
     JobRepository jobRepository; //JPA a Bean managed by SPRING it will be autowired at RUNTIME
+    @Autowired
     public JobServiceImpl(JobRepository jobRepository) { //Dependency Injection
         this.jobRepository = jobRepository;
     }
