@@ -7,18 +7,18 @@ import java.util.List;
 
 public interface JobService {
 
-    public List<Job> findAll();
+    List<Job> findAll();
 
-    public Job getJobById(int id);
+    Job getJobById(int id);
 
-    public boolean addJob(@RequestBody Job job);
+    boolean addJob(@RequestBody Job job);
 
-    public boolean deleteJob(int id);
+    boolean deleteJob(int id);
 
-    public boolean updateJob(int id, @RequestBody Job updatedJob);
+    boolean updateJob(int id, @RequestBody Job updatedJob);
 
-    public Job fetchJob(int id, String title);
+    Job fetchJob(int id, String title);
 
-    public  boolean patchJob(int id, @RequestBody Job patchJob);
+    boolean patchJob(int id, @RequestBody Job patchJob);
 }
 

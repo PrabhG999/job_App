@@ -7,21 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class JobServiceImpl implements JobService {
     //private final List<Job> jobs = new ArrayList<>(); //disable array list bcs we making JPA methods
     //define repo obj
-    JobRepository jobRepository; //JPA a Bean managed by SPRING it will be autowired at RUNTIME
+    private final JobRepository jobRepository; //JPA a Bean managed by SPRING it will be autowired at RUNTIME
 
     @Autowired
     public JobServiceImpl(JobRepository jobRepository) { //Dependency Injection
         this.jobRepository = jobRepository;
-    }
-
-
-    public JobServiceImpl() {
     }
 
     @Override
