@@ -1,5 +1,6 @@
 package com.example.jobapplication.Job;
 
+import com.example.jobapplication.Company.Company;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,7 @@ public class JobController {
     @PostMapping
     public ResponseEntity<String> addJob(@RequestBody Job job) {
         boolean isJobAdded = jobService.addJob(job);
+        Company company= job.getCompany(); //get Company here
         if (isJobAdded) {
             return new ResponseEntity<>("Job added Successfully",
                     HttpStatus.OK);

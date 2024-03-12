@@ -1,7 +1,19 @@
 package com.example.jobapplication.Company.Impl;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.example.jobapplication.Company.Company;
 import com.example.jobapplication.Company.CompanyRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -10,13 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.aot.DisabledInAotMode;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {CompanyServiceImpl.class})
 @ExtendWith(SpringExtension.class)
@@ -55,14 +60,18 @@ class CompanyServiceImplTest {
         Company company = new Company();
         company.setDescription("The characteristics of someone or something");
         company.setId(1);
+        company.setJobs(new ArrayList<>());
         company.setName("Name");
+        company.setReview(new ArrayList<>());
         Optional<Company> ofResult = Optional.of(company);
         when(companyRepository.findById(Mockito.<Integer>any())).thenReturn(ofResult);
 
         Company updateCompany = new Company();
         updateCompany.setDescription("The characteristics of someone or something");
         updateCompany.setId(1);
+        updateCompany.setJobs(new ArrayList<>());
         updateCompany.setName("Name");
+        updateCompany.setReview(new ArrayList<>());
 
         // Act
         boolean actualUpdateCompanyResult = companyServiceImpl.updateCompany(1, updateCompany);
@@ -84,7 +93,9 @@ class CompanyServiceImplTest {
         Company updateCompany = new Company();
         updateCompany.setDescription("The characteristics of someone or something");
         updateCompany.setId(1);
+        updateCompany.setJobs(new ArrayList<>());
         updateCompany.setName("Name");
+        updateCompany.setReview(new ArrayList<>());
 
         // Act
         boolean actualUpdateCompanyResult = companyServiceImpl.updateCompany(1, updateCompany);
@@ -103,19 +114,23 @@ class CompanyServiceImplTest {
         Company company = new Company();
         company.setDescription("The characteristics of someone or something");
         company.setId(1);
+        company.setJobs(new ArrayList<>());
         company.setName("Name");
-        when(companyRepository.save(Mockito.any())).thenReturn(company);
+        company.setReview(new ArrayList<>());
+        when(companyRepository.save(Mockito.<Company>any())).thenReturn(company);
 
         Company company2 = new Company();
         company2.setDescription("The characteristics of someone or something");
         company2.setId(1);
+        company2.setJobs(new ArrayList<>());
         company2.setName("Name");
+        company2.setReview(new ArrayList<>());
 
         // Act
         boolean actualAddCompanyResult = companyServiceImpl.addCompany(company2);
 
         // Assert
-        verify(companyRepository).save(Mockito.any());
+        verify(companyRepository).save(Mockito.<Company>any());
         assertTrue(actualAddCompanyResult);
     }
 
@@ -144,7 +159,9 @@ class CompanyServiceImplTest {
         Company company = new Company();
         company.setDescription("The characteristics of someone or something");
         company.setId(1);
+        company.setJobs(new ArrayList<>());
         company.setName("Name");
+        company.setReview(new ArrayList<>());
         Optional<Company> ofResult = Optional.of(company);
         when(companyRepository.findById(Mockito.<Integer>any())).thenReturn(ofResult);
 
@@ -165,27 +182,33 @@ class CompanyServiceImplTest {
         Company company = new Company();
         company.setDescription("The characteristics of someone or something");
         company.setId(1);
+        company.setJobs(new ArrayList<>());
         company.setName("Name");
+        company.setReview(new ArrayList<>());
         Optional<Company> ofResult = Optional.of(company);
 
         Company company2 = new Company();
         company2.setDescription("The characteristics of someone or something");
         company2.setId(1);
+        company2.setJobs(new ArrayList<>());
         company2.setName("Name");
-        when(companyRepository.save(Mockito.any())).thenReturn(company2);
+        company2.setReview(new ArrayList<>());
+        when(companyRepository.save(Mockito.<Company>any())).thenReturn(company2);
         when(companyRepository.findById(Mockito.<Integer>any())).thenReturn(ofResult);
 
         Company company3 = new Company();
         company3.setDescription("The characteristics of someone or something");
         company3.setId(1);
+        company3.setJobs(new ArrayList<>());
         company3.setName("Name");
+        company3.setReview(new ArrayList<>());
 
         // Act
         boolean actualPatchCompanyResult = companyServiceImpl.patchCompany(1, company3);
 
         // Assert
         verify(companyRepository).findById(Mockito.<Integer>any());
-        verify(companyRepository).save(Mockito.any());
+        verify(companyRepository).save(Mockito.<Company>any());
         assertTrue(actualPatchCompanyResult);
     }
 
@@ -201,7 +224,9 @@ class CompanyServiceImplTest {
         Company company = new Company();
         company.setDescription("The characteristics of someone or something");
         company.setId(1);
+        company.setJobs(new ArrayList<>());
         company.setName("Name");
+        company.setReview(new ArrayList<>());
 
         // Act
         boolean actualPatchCompanyResult = companyServiceImpl.patchCompany(1, company);
@@ -209,38 +234,5 @@ class CompanyServiceImplTest {
         // Assert
         verify(companyRepository).findById(Mockito.<Integer>any());
         assertFalse(actualPatchCompanyResult);
-    }
-
-    /**
-     * Method under test: {@link CompanyServiceImpl#patchCompany(int, Company)}
-     */
-    @Test
-    void testPatchCompany3() {
-        // Arrange
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setName("Name");
-        Optional<Company> ofResult = Optional.of(company);
-
-        Company company2 = new Company();
-        company2.setDescription("The characteristics of someone or something");
-        company2.setId(1);
-        company2.setName("Name");
-        when(companyRepository.save(Mockito.any())).thenReturn(company2);
-        when(companyRepository.findById(Mockito.<Integer>any())).thenReturn(ofResult);
-
-        Company company3 = new Company();
-        company3.setDescription(null);
-        company3.setId(1);
-        company3.setName("Name");
-
-        // Act
-        boolean actualPatchCompanyResult = companyServiceImpl.patchCompany(1, company3);
-
-        // Assert
-        verify(companyRepository).findById(Mockito.<Integer>any());
-        verify(companyRepository).save(Mockito.any());
-        assertTrue(actualPatchCompanyResult);
     }
 }

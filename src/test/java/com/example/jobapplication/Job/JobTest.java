@@ -1,22 +1,29 @@
 package com.example.jobapplication.Job;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class JobDiffblueTest {
+import com.example.jobapplication.Company.Company;
+
+import java.util.ArrayList;
+
+import org.junit.jupiter.api.Test;
+
+class JobTest {
     /**
      * Methods under test:
      *
      * <ul>
      *   <li>{@link Job#Job()}
+     *   <li>{@link Job#setCompany(Company)}
      *   <li>{@link Job#setDescription(String)}
      *   <li>{@link Job#setId(int)}
      *   <li>{@link Job#setLocation(String)}
      *   <li>{@link Job#setMaxSalary(double)}
      *   <li>{@link Job#setMinSalary(double)}
      *   <li>{@link Job#setTitle(String)}
+     *   <li>{@link Job#getCompany()}
      *   <li>{@link Job#getDescription()}
      *   <li>{@link Job#getId()}
      *   <li>{@link Job#getLocation()}
@@ -29,12 +36,20 @@ class JobDiffblueTest {
     void testGettersAndSetters() {
         // Arrange and Act
         Job actualJob = new Job();
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
+        actualJob.setCompany(company);
         actualJob.setDescription("The characteristics of someone or something");
         actualJob.setId(1);
         actualJob.setLocation("Location");
         actualJob.setMaxSalary(10.0d);
         actualJob.setMinSalary(10.0d);
         actualJob.setTitle("Dr");
+        Company actualCompany = actualJob.getCompany();
         String actualDescription = actualJob.getDescription();
         int actualId = actualJob.getId();
         String actualLocation = actualJob.getLocation();
@@ -48,6 +63,7 @@ class JobDiffblueTest {
         assertEquals(1, actualId);
         assertEquals(10.0d, actualMaxSalary);
         assertEquals(10.0d, actualMinSalary);
+        assertSame(company, actualCompany);
     }
 
     /**

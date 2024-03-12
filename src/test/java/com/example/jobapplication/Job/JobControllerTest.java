@@ -1,6 +1,13 @@
 package com.example.jobapplication.Job;
 
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.when;
+
+import com.example.jobapplication.Company.Company;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -16,15 +23,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
-
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.when;
-
 @ContextConfiguration(classes = {JobController.class})
 @ExtendWith(SpringExtension.class)
 @DisabledInAotMode
-class JobControllerDiffblueTest {
+class JobControllerTest {
     @Autowired
     private JobController jobController;
 
@@ -55,9 +57,17 @@ class JobControllerDiffblueTest {
     @Test
     void testAddJob() throws Exception {
         // Arrange
-        when(jobService.addJob(Mockito.any())).thenReturn(true);
+        when(jobService.addJob(Mockito.<Job>any())).thenReturn(true);
+
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
 
         Job job = new Job();
+        job.setCompany(company);
         job.setDescription("The characteristics of someone or something");
         job.setId(1);
         job.setLocation("Location");
@@ -84,9 +94,17 @@ class JobControllerDiffblueTest {
     @Test
     void testAddJob2() throws Exception {
         // Arrange
-        when(jobService.addJob(Mockito.any())).thenReturn(false);
+        when(jobService.addJob(Mockito.<Job>any())).thenReturn(false);
+
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
 
         Job job = new Job();
+        job.setCompany(company);
         job.setDescription("The characteristics of someone or something");
         job.setId(1);
         job.setLocation("Location");
@@ -149,9 +167,17 @@ class JobControllerDiffblueTest {
     @Test
     void testUpdateJob() throws Exception {
         // Arrange
-        when(jobService.updateJob(anyInt(), Mockito.any())).thenReturn(true);
+        when(jobService.updateJob(anyInt(), Mockito.<Job>any())).thenReturn(true);
+
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
 
         Job job = new Job();
+        job.setCompany(company);
         job.setDescription("The characteristics of someone or something");
         job.setId(1);
         job.setLocation("Location");
@@ -178,9 +204,17 @@ class JobControllerDiffblueTest {
     @Test
     void testUpdateJob2() throws Exception {
         // Arrange
-        when(jobService.updateJob(anyInt(), Mockito.any())).thenReturn(false);
+        when(jobService.updateJob(anyInt(), Mockito.<Job>any())).thenReturn(false);
+
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
 
         Job job = new Job();
+        job.setCompany(company);
         job.setDescription("The characteristics of someone or something");
         job.setId(1);
         job.setLocation("Location");
@@ -207,14 +241,22 @@ class JobControllerDiffblueTest {
     @Test
     void testFetchJob() throws Exception {
         // Arrange
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
+
         Job job = new Job();
+        job.setCompany(company);
         job.setDescription("The characteristics of someone or something");
         job.setId(1);
         job.setLocation("Location");
         job.setMaxSalary(10.0d);
         job.setMinSalary(10.0d);
         job.setTitle("Dr");
-        when(jobService.fetchJob(anyInt(), Mockito.any())).thenReturn(job);
+        when(jobService.fetchJob(anyInt(), Mockito.<String>any())).thenReturn(job);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/jobs/{id}/{title}", 1, "Dr");
 
         // Act and Assert
@@ -226,7 +268,8 @@ class JobControllerDiffblueTest {
                 .andExpect(MockMvcResultMatchers.content()
                         .string(
                                 "{\"id\":1,\"title\":\"Dr\",\"description\":\"The characteristics of someone or something\",\"minSalary\":10.0,"
-                                        + "\"maxSalary\":10.0,\"location\":\"Location\"}"));
+                                        + "\"maxSalary\":10.0,\"location\":\"Location\",\"company\":{\"id\":1,\"name\":\"Name\",\"description\":\"The characteristics"
+                                        + " of someone or something\",\"review\":[]}}"));
     }
 
     /**
@@ -235,9 +278,17 @@ class JobControllerDiffblueTest {
     @Test
     void testPatchJob() throws Exception {
         // Arrange
-        when(jobService.patchJob(anyInt(), Mockito.any())).thenReturn(true);
+        when(jobService.patchJob(anyInt(), Mockito.<Job>any())).thenReturn(true);
+
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
 
         Job job = new Job();
+        job.setCompany(company);
         job.setDescription("The characteristics of someone or something");
         job.setId(1);
         job.setLocation("Location");
@@ -264,9 +315,17 @@ class JobControllerDiffblueTest {
     @Test
     void testPatchJob2() throws Exception {
         // Arrange
-        when(jobService.patchJob(anyInt(), Mockito.any())).thenReturn(false);
+        when(jobService.patchJob(anyInt(), Mockito.<Job>any())).thenReturn(false);
+
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
 
         Job job = new Job();
+        job.setCompany(company);
         job.setDescription("The characteristics of someone or something");
         job.setId(1);
         job.setLocation("Location");
@@ -293,7 +352,15 @@ class JobControllerDiffblueTest {
     @Test
     void testFindAll2() throws Exception {
         // Arrange
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
+
         Job job = new Job();
+        job.setCompany(company);
         job.setDescription("The characteristics of someone or something");
         job.setId(1);
         job.setLocation("Location");
@@ -312,6 +379,7 @@ class JobControllerDiffblueTest {
                 .andExpect(MockMvcResultMatchers.content()
                         .string(
                                 "{\"id\":1,\"title\":\"Dr\",\"description\":\"The characteristics of someone or something\",\"minSalary\":10.0,"
-                                        + "\"maxSalary\":10.0,\"location\":\"Location\"}"));
+                                        + "\"maxSalary\":10.0,\"location\":\"Location\",\"company\":{\"id\":1,\"name\":\"Name\",\"description\":\"The characteristics"
+                                        + " of someone or something\",\"review\":[]}}"));
     }
 }

@@ -1,7 +1,22 @@
 package com.example.jobapplication.Job.Impl;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.example.jobapplication.Company.Company;
 import com.example.jobapplication.Job.Job;
 import com.example.jobapplication.Job.JobRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -10,14 +25,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.aot.DisabledInAotMode;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {JobServiceImpl.class})
 @ExtendWith(SpringExtension.class)
@@ -53,7 +60,15 @@ class JobServiceImplTest {
     @Test
     void testGetJobById() {
         // Arrange
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
+
         Job job = new Job();
+        job.setCompany(company);
         job.setDescription("The characteristics of someone or something");
         job.setId(1);
         job.setLocation("Location");
@@ -77,16 +92,32 @@ class JobServiceImplTest {
     @Test
     void testAddJob() {
         // Arrange
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
+
         Job job = new Job();
+        job.setCompany(company);
         job.setDescription("The characteristics of someone or something");
         job.setId(1);
         job.setLocation("Location");
         job.setMaxSalary(10.0d);
         job.setMinSalary(10.0d);
         job.setTitle("Dr");
-        when(jobRepository.save(Mockito.any())).thenReturn(job);
+        when(jobRepository.save(Mockito.<Job>any())).thenReturn(job);
+
+        Company company2 = new Company();
+        company2.setDescription("The characteristics of someone or something");
+        company2.setId(1);
+        company2.setJobs(new ArrayList<>());
+        company2.setName("Name");
+        company2.setReview(new ArrayList<>());
 
         Job job2 = new Job();
+        job2.setCompany(company2);
         job2.setDescription("The characteristics of someone or something");
         job2.setId(1);
         job2.setLocation("Location");
@@ -98,7 +129,7 @@ class JobServiceImplTest {
         boolean actualAddJobResult = jobServiceImpl.addJob(job2);
 
         // Assert
-        verify(jobRepository).save(Mockito.any());
+        verify(jobRepository).save(Mockito.<Job>any());
         assertTrue(actualAddJobResult);
     }
 
@@ -124,7 +155,15 @@ class JobServiceImplTest {
     @Test
     void testUpdateJob() {
         // Arrange
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
+
         Job job = new Job();
+        job.setCompany(company);
         job.setDescription("The characteristics of someone or something");
         job.setId(1);
         job.setLocation("Location");
@@ -133,17 +172,33 @@ class JobServiceImplTest {
         job.setTitle("Dr");
         Optional<Job> ofResult = Optional.of(job);
 
+        Company company2 = new Company();
+        company2.setDescription("The characteristics of someone or something");
+        company2.setId(1);
+        company2.setJobs(new ArrayList<>());
+        company2.setName("Name");
+        company2.setReview(new ArrayList<>());
+
         Job job2 = new Job();
+        job2.setCompany(company2);
         job2.setDescription("The characteristics of someone or something");
         job2.setId(1);
         job2.setLocation("Location");
         job2.setMaxSalary(10.0d);
         job2.setMinSalary(10.0d);
         job2.setTitle("Dr");
-        when(jobRepository.save(Mockito.any())).thenReturn(job2);
+        when(jobRepository.save(Mockito.<Job>any())).thenReturn(job2);
         when(jobRepository.findById(Mockito.<Integer>any())).thenReturn(ofResult);
 
+        Company company3 = new Company();
+        company3.setDescription("The characteristics of someone or something");
+        company3.setId(1);
+        company3.setJobs(new ArrayList<>());
+        company3.setName("Name");
+        company3.setReview(new ArrayList<>());
+
         Job updatedJob = new Job();
+        updatedJob.setCompany(company3);
         updatedJob.setDescription("The characteristics of someone or something");
         updatedJob.setId(1);
         updatedJob.setLocation("Location");
@@ -156,7 +211,7 @@ class JobServiceImplTest {
 
         // Assert
         verify(jobRepository).findById(Mockito.<Integer>any());
-        verify(jobRepository).save(Mockito.any());
+        verify(jobRepository).save(Mockito.<Job>any());
         assertTrue(actualUpdateJobResult);
     }
 
@@ -169,7 +224,15 @@ class JobServiceImplTest {
         Optional<Job> emptyResult = Optional.empty();
         when(jobRepository.findById(Mockito.<Integer>any())).thenReturn(emptyResult);
 
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
+
         Job updatedJob = new Job();
+        updatedJob.setCompany(company);
         updatedJob.setDescription("The characteristics of someone or something");
         updatedJob.setId(1);
         updatedJob.setLocation("Location");
@@ -191,14 +254,22 @@ class JobServiceImplTest {
     @Test
     void testFetchJob() {
         // Arrange
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
+
         Job job = new Job();
+        job.setCompany(company);
         job.setDescription("The characteristics of someone or something");
         job.setId(1);
         job.setLocation("Location");
         job.setMaxSalary(10.0d);
         job.setMinSalary(10.0d);
         job.setTitle("Dr");
-        when(jobRepository.findByIdAndTitle(anyInt(), Mockito.any())).thenReturn(job);
+        when(jobRepository.findByIdAndTitle(anyInt(), Mockito.<String>any())).thenReturn(job);
 
         // Act
         Job actualFetchJobResult = jobServiceImpl.fetchJob(1, "Dr");
@@ -214,7 +285,15 @@ class JobServiceImplTest {
     @Test
     void testPatchJob() {
         // Arrange
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
+
         Job job = new Job();
+        job.setCompany(company);
         job.setDescription("The characteristics of someone or something");
         job.setId(1);
         job.setLocation("Location");
@@ -223,17 +302,33 @@ class JobServiceImplTest {
         job.setTitle("Dr");
         Optional<Job> ofResult = Optional.of(job);
 
+        Company company2 = new Company();
+        company2.setDescription("The characteristics of someone or something");
+        company2.setId(1);
+        company2.setJobs(new ArrayList<>());
+        company2.setName("Name");
+        company2.setReview(new ArrayList<>());
+
         Job job2 = new Job();
+        job2.setCompany(company2);
         job2.setDescription("The characteristics of someone or something");
         job2.setId(1);
         job2.setLocation("Location");
         job2.setMaxSalary(10.0d);
         job2.setMinSalary(10.0d);
         job2.setTitle("Dr");
-        when(jobRepository.save(Mockito.any())).thenReturn(job2);
+        when(jobRepository.save(Mockito.<Job>any())).thenReturn(job2);
         when(jobRepository.findById(Mockito.<Integer>any())).thenReturn(ofResult);
 
+        Company company3 = new Company();
+        company3.setDescription("The characteristics of someone or something");
+        company3.setId(1);
+        company3.setJobs(new ArrayList<>());
+        company3.setName("Name");
+        company3.setReview(new ArrayList<>());
+
         Job patchJob = new Job();
+        patchJob.setCompany(company3);
         patchJob.setDescription("The characteristics of someone or something");
         patchJob.setId(1);
         patchJob.setLocation("Location");
@@ -246,7 +341,7 @@ class JobServiceImplTest {
 
         // Assert
         verify(jobRepository).findById(Mockito.<Integer>any());
-        verify(jobRepository).save(Mockito.any());
+        verify(jobRepository).save(Mockito.<Job>any());
         assertTrue(actualPatchJobResult);
     }
 
@@ -259,7 +354,15 @@ class JobServiceImplTest {
         Optional<Job> emptyResult = Optional.empty();
         when(jobRepository.findById(Mockito.<Integer>any())).thenReturn(emptyResult);
 
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
+
         Job patchJob = new Job();
+        patchJob.setCompany(company);
         patchJob.setDescription("The characteristics of someone or something");
         patchJob.setId(1);
         patchJob.setLocation("Location");

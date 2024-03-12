@@ -1,6 +1,12 @@
 package com.example.jobapplication.Company;
 
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -16,15 +22,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
-
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.when;
-
 @ContextConfiguration(classes = {CompanyController.class})
 @ExtendWith(SpringExtension.class)
 @DisabledInAotMode
-class CompanyControllerDiffblueTest {
+class CompanyControllerTest {
     @Autowired
     private CompanyController companyController;
 
@@ -55,12 +56,14 @@ class CompanyControllerDiffblueTest {
     @Test
     void testUpdateCompany() throws Exception {
         // Arrange
-        when(companyService.updateCompany(anyInt(), Mockito.any())).thenReturn(true);
+        when(companyService.updateCompany(anyInt(), Mockito.<Company>any())).thenReturn(true);
 
         Company company = new Company();
         company.setDescription("The characteristics of someone or something");
         company.setId(1);
+        company.setJobs(new ArrayList<>());
         company.setName("Name");
+        company.setReview(new ArrayList<>());
         String content = (new ObjectMapper()).writeValueAsString(company);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/companies/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -81,12 +84,14 @@ class CompanyControllerDiffblueTest {
     @Test
     void testUpdateCompany2() throws Exception {
         // Arrange
-        when(companyService.updateCompany(anyInt(), Mockito.any())).thenReturn(false);
+        when(companyService.updateCompany(anyInt(), Mockito.<Company>any())).thenReturn(false);
 
         Company company = new Company();
         company.setDescription("The characteristics of someone or something");
         company.setId(1);
+        company.setJobs(new ArrayList<>());
         company.setName("Name");
+        company.setReview(new ArrayList<>());
         String content = (new ObjectMapper()).writeValueAsString(company);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/companies/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -109,12 +114,14 @@ class CompanyControllerDiffblueTest {
     @Test
     void testAddCompany() throws Exception {
         // Arrange
-        when(companyService.addCompany(Mockito.any())).thenReturn(true);
+        when(companyService.addCompany(Mockito.<Company>any())).thenReturn(true);
 
         Company company = new Company();
         company.setDescription("The characteristics of someone or something");
         company.setId(1);
+        company.setJobs(new ArrayList<>());
         company.setName("Name");
+        company.setReview(new ArrayList<>());
         String content = (new ObjectMapper()).writeValueAsString(company);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/companies")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -137,12 +144,14 @@ class CompanyControllerDiffblueTest {
     @Test
     void testAddCompany2() throws Exception {
         // Arrange
-        when(companyService.addCompany(Mockito.any())).thenReturn(false);
+        when(companyService.addCompany(Mockito.<Company>any())).thenReturn(false);
 
         Company company = new Company();
         company.setDescription("The characteristics of someone or something");
         company.setId(1);
+        company.setJobs(new ArrayList<>());
         company.setName("Name");
+        company.setReview(new ArrayList<>());
         String content = (new ObjectMapper()).writeValueAsString(company);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/companies")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -206,7 +215,9 @@ class CompanyControllerDiffblueTest {
         Company company = new Company();
         company.setDescription("The characteristics of someone or something");
         company.setId(1);
+        company.setJobs(new ArrayList<>());
         company.setName("Name");
+        company.setReview(new ArrayList<>());
         when(companyService.getAllCompaniesById(anyInt())).thenReturn(company);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/companies/{id}", 1);
 
@@ -217,7 +228,9 @@ class CompanyControllerDiffblueTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
                 .andExpect(MockMvcResultMatchers.content()
-                        .string("{\"id\":1,\"name\":\"Name\",\"description\":\"The characteristics of someone or something\"}"));
+                        .string(
+                                "{\"id\":1,\"name\":\"Name\",\"description\":\"The characteristics of someone or something\",\"jobs\":[],"
+                                        + "\"review\":[]}"));
     }
 
     /**
@@ -226,12 +239,14 @@ class CompanyControllerDiffblueTest {
     @Test
     void testPatchCompany() throws Exception {
         // Arrange
-        when(companyService.patchCompany(anyInt(), Mockito.any())).thenReturn(true);
+        when(companyService.patchCompany(anyInt(), Mockito.<Company>any())).thenReturn(true);
 
         Company company = new Company();
         company.setDescription("The characteristics of someone or something");
         company.setId(1);
+        company.setJobs(new ArrayList<>());
         company.setName("Name");
+        company.setReview(new ArrayList<>());
         String content = (new ObjectMapper()).writeValueAsString(company);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.patch("/companies/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -252,12 +267,14 @@ class CompanyControllerDiffblueTest {
     @Test
     void testPatchCompany2() throws Exception {
         // Arrange
-        when(companyService.patchCompany(anyInt(), Mockito.any())).thenReturn(false);
+        when(companyService.patchCompany(anyInt(), Mockito.<Company>any())).thenReturn(false);
 
         Company company = new Company();
         company.setDescription("The characteristics of someone or something");
         company.setId(1);
+        company.setJobs(new ArrayList<>());
         company.setName("Name");
+        company.setReview(new ArrayList<>());
         String content = (new ObjectMapper()).writeValueAsString(company);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.patch("/companies/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)

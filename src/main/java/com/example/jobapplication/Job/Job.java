@@ -1,5 +1,7 @@
 package com.example.jobapplication.Job;
 
+import com.example.jobapplication.Company.Company;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,6 +18,9 @@ public class Job {
     private double maxSalary;
     private String location;
 
+    @ManyToOne
+    @JsonIgnoreProperties("jobs")
+    private Company company;
     public Job() {
         //need a default constructor for Entity in JPA
         //Why ? - Entity are Objects that represent the persistent data in DB - Requirement of JPA
@@ -35,6 +40,14 @@ public class Job {
             throw new IllegalArgumentException("Salary Values are invalid, Please check again");
         }
 
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public int getId() {

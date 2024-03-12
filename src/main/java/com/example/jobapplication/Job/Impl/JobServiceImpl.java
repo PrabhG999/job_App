@@ -62,6 +62,7 @@ public class JobServiceImpl implements JobService {
             job.setMinSalary(updatedJob.getMinSalary());
             job.setMaxSalary(updatedJob.getMaxSalary());
             job.setLocation(updatedJob.getLocation());
+            job.setCompany(updatedJob.getCompany());
 
             jobRepository.save(job);
             return true;
@@ -94,6 +95,9 @@ public class JobServiceImpl implements JobService {
             }
             if (patchJob.getLocation() != null) {
                 existingJob.setLocation(patchJob.getLocation());
+            }
+            if(patchJob.getCompany()!=null){
+                existingJob.setCompany(patchJob.getCompany());
             }
             jobRepository.save(existingJob);
             return true;
