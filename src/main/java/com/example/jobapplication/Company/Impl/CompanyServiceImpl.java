@@ -3,6 +3,8 @@ package com.example.jobapplication.Company.Impl;
 import com.example.jobapplication.Company.Company;
 import com.example.jobapplication.Company.CompanyRepository;
 import com.example.jobapplication.Company.CompanyService;
+import com.example.jobapplication.Job.Job;
+import com.example.jobapplication.Review.Review;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +44,18 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public boolean addCompany(@RequestBody Company company) {
         if (company != null) {
+            // Initialize the lists to avoid NullPointerException
+            if (company.getJobs() != null) {
+                for (Job job : company.getJobs()) {
+                    job.setCompany(company);
+                }
+            }
+            if (company.getReview() != null) {
+                for (Review review : company.getReview()) {
+                    review.setCompany(company);
+                }
+            }
+            // Save the company entity along with its associated jobs and reviews
             companyRepository.save(company);
             return true;
         } else {
