@@ -9,6 +9,8 @@ import static org.mockito.Mockito.when;
 
 import com.example.jobapplication.Company.Company;
 import com.example.jobapplication.Company.CompanyRepository;
+import com.example.jobapplication.Job.Job;
+import com.example.jobapplication.Review.Review;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {CompanyServiceImpl.class})
 @ExtendWith(SpringExtension.class)
 @DisabledInAotMode
-class CompanyServiceImplTest {
+class CompanyServiceImplDiffblueTest {
     @MockBean
     private CompanyRepository companyRepository;
 
@@ -132,6 +134,101 @@ class CompanyServiceImplTest {
         // Assert
         verify(companyRepository).save(Mockito.<Company>any());
         assertTrue(actualAddCompanyResult);
+    }
+
+    /**
+     * Method under test: {@link CompanyServiceImpl#addCompany(Company)}
+     */
+    @Test
+    void testAddCompany2() {
+        // Arrange
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
+        when(companyRepository.save(Mockito.<Company>any())).thenReturn(company);
+
+        Company company2 = new Company();
+        company2.setDescription("The characteristics of someone or something");
+        company2.setId(1);
+        company2.setJobs(new ArrayList<>());
+        company2.setName("Name");
+        company2.setReview(new ArrayList<>());
+
+        Job job = new Job();
+        job.setCompany(company2);
+        job.setDescription("The characteristics of someone or something");
+        job.setId(1);
+        job.setLocation("Location");
+        job.setMaxSalary(10.0d);
+        job.setMinSalary(10.0d);
+        job.setTitle("Dr");
+
+        ArrayList<Job> jobs = new ArrayList<>();
+        jobs.add(job);
+
+        Company company3 = new Company();
+        company3.setDescription("The characteristics of someone or something");
+        company3.setId(1);
+        company3.setJobs(jobs);
+        company3.setName("Name");
+        company3.setReview(new ArrayList<>());
+
+        // Act
+        boolean actualAddCompanyResult = companyServiceImpl.addCompany(company3);
+
+        // Assert
+        verify(companyRepository).save(Mockito.<Company>any());
+        assertTrue(actualAddCompanyResult);
+    }
+
+    /**
+     * Method under test: {@link CompanyServiceImpl#addCompany(Company)}
+     */
+    @Test
+    void testAddCompany3() {
+        // Arrange
+        Company company = new Company();
+        company.setDescription("The characteristics of someone or something");
+        company.setId(1);
+        company.setJobs(new ArrayList<>());
+        company.setName("Name");
+        company.setReview(new ArrayList<>());
+        when(companyRepository.save(Mockito.<Company>any())).thenReturn(company);
+
+        Company company2 = new Company();
+        company2.setDescription("The characteristics of someone or something");
+        company2.setId(1);
+        company2.setJobs(new ArrayList<>());
+        company2.setName("Name");
+        company2.setReview(new ArrayList<>());
+
+        Review review = new Review();
+        review.setCompany(company2);
+        review.setDescription("The characteristics of someone or something");
+        review.setRating(10.0d);
+        review.setReviewId(1);
+        review.setTitle("Dr");
+
+        ArrayList<Review> review2 = new ArrayList<>();
+        review2.add(review);
+
+        Company company3 = new Company();
+        company3.setDescription("The characteristics of someone or something");
+        company3.setId(1);
+        company3.setJobs(new ArrayList<>());
+        company3.setName("Name");
+        company3.setReview(review2);
+
+        // Act
+        boolean actualAddCompanyResult = companyServiceImpl.addCompany(company3);
+
+        // Assert
+        verify(companyRepository).save(Mockito.<Company>any());
+        assertTrue(actualAddCompanyResult);
+        assertSame(company3, company3.getReview().get(0).getCompany());
     }
 
     /**

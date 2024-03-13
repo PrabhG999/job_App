@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-class CompanyTest {
+class CompanyDiffblueTest {
     /**
      * Methods under test:
      *
@@ -57,7 +57,7 @@ class CompanyTest {
      * Methods under test:
      *
      * <ul>
-     *   <li>{@link Company#Company(int, String, String, List)}
+     *   <li>{@link Company#Company(int, String, String, List, List)}
      *   <li>{@link Company#setDescription(String)}
      *   <li>{@link Company#setId(int)}
      *   <li>{@link Company#setJobs(List)}
@@ -76,7 +76,8 @@ class CompanyTest {
         ArrayList<Job> jobs = new ArrayList<>();
 
         // Act
-        Company actualCompany = new Company(1, "Name", "The characteristics of someone or something", jobs);
+        Company actualCompany = new Company(1, "Name", "The characteristics of someone or something", jobs,
+                new ArrayList<>());
         actualCompany.setDescription("The characteristics of someone or something");
         actualCompany.setId(1);
         ArrayList<Job> jobs2 = new ArrayList<>();

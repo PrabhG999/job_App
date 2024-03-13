@@ -1,6 +1,7 @@
 package com.example.jobapplication.Review;
 
 import com.example.jobapplication.Company.Company;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -9,30 +10,30 @@ public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int reviewId;
     private String title;
     private String description;
     private double rating;
 
     @ManyToOne
-    @JsonIgnoreProperties("reviews")
+    @JsonIgnoreProperties("review")
     Company company;
     public Review() { //JPA Constructor
     }
 
-    public Review(int id, String title, String description, double rating) {
-        this.id = id;
+    public Review(int reviewId, String title, String description, double rating) {
+        this.reviewId = reviewId;
         this.title = title;
         this.description = description;
         this.rating = rating;
     }
 
-    public int getId() {
-        return id;
+    public int getReviewId() {
+        return reviewId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setReviewId(int id) {
+        this.reviewId = id;
     }
 
     public String getTitle() {

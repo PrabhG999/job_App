@@ -4,8 +4,10 @@ import com.example.jobapplication.Job.Job;
 import com.example.jobapplication.Review.Review;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,30 +20,23 @@ public class Company {
 
 
     //map every company to list of jobs
-    @OneToMany(mappedBy = "company")
-    // - means one company have many jobs             mapped by company kin of shows the relation between company and jobs. (Job entity have filed called company which maps the field)
-    private List<Job> jobs;
+    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("company")
+    List<Job> jobs;
 
-
-    @OneToMany(mappedBy = "company")
-    private List<Review> review;
-
-    public List<Review> getReview() {
-        return review;
-    }
-
-    public void setReview(List<Review> review) {
-        this.review = review;
-    }
+    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("company")
+    List<Review> review;
 
     public Company() { //constructor for JPA
     }
 
-    public Company(int id, String name, String description, List<Job> jobs) { //constructor for CompanyIMPL
+    public Company(int id, String name, String description, List<Job> jobs,List<Review> review) { //constructor for CompanyIMPL
         this.id = id;
         this.name = name;
         this.description = description;
-        this.jobs = jobs;
+        this.jobs=jobs;
+        this.review=review;
 
     }
 
@@ -53,6 +48,13 @@ public class Company {
         this.id = id;
     }
 
+    public List<Review> getReview() {
+        return review;
+    }
+
+    public void setReview(List<Review> review) {
+        this.review = review;
+    }
     public String getName() {
         return this.name;
     }
