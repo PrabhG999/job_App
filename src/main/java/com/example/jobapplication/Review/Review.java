@@ -5,12 +5,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "Review")
 public class Review {
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "company_id")
     @JsonIgnoreProperties("reviews")
-    Company company;
+    private Company company;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int reviewId;
@@ -28,11 +29,11 @@ public class Review {
         this.rating = rating;
     }
 
-    public int getReviewId() {
+    public int getId() {
         return reviewId;
     }
 
-    public void setReviewId(int id) {
+    public void setId(int id) {
         this.reviewId = id;
     }
 

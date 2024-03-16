@@ -8,14 +8,16 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name = "Company")
 public class Company {
     //map every company to list of jobs
     @OneToMany(mappedBy = "company", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnoreProperties("company")
-    List<Job> jobs;
+    private List<Job> jobs;
+
     @OneToMany(mappedBy = "company", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnoreProperties("company")
-    List<Review> reviews;
+    private List<Review> reviews;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //defining aunique id dor Dbase
     private int id;
@@ -45,7 +47,7 @@ public class Company {
         return reviews;
     }
 
-    public void setReview(List<Review> reviews) {
+    public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
     }
 

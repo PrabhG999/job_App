@@ -3,6 +3,7 @@ package com.example.jobapplication.Review.Impl;
 import com.example.jobapplication.Review.Review;
 import com.example.jobapplication.Review.ReviewRepository;
 import com.example.jobapplication.Review.ReviewService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +26,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional
     public boolean addReview(Review review) {
         if (review != null) {
             reviewRepository.save(review);
