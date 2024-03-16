@@ -96,7 +96,7 @@ public class JobServiceImpl implements JobService {
             if (patchJob.getLocation() != null) {
                 existingJob.setLocation(patchJob.getLocation());
             }
-            if(patchJob.getCompany()!=null){
+            if (patchJob.getCompany() != null) {
                 existingJob.setCompany(patchJob.getCompany());
             }
             jobRepository.save(existingJob);

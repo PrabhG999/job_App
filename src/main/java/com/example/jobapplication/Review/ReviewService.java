@@ -4,12 +4,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-public interface ReviewService{
+public interface ReviewService {
     List<Review> getAllReviews();
+
     boolean addReview(@RequestBody Review review);
+
     Review getReviewById(int id);
-    boolean updateReview(int id,@RequestBody Review review);
+
+    boolean updateReview(int id, @RequestBody Review review);
+
     boolean deleteReview(int id);
-    boolean patchReview(int id,@RequestBody Review review);
+
+    boolean patchReview(int id, @RequestBody Review review);
 
 }

@@ -21,6 +21,7 @@ public class Job {
     @ManyToOne
     @JsonIgnoreProperties("jobs")
     private Company company;
+
     public Job() {
         //need a default constructor for Entity in JPA
         //Why ? - Entity are Objects that represent the persistent data in DB - Requirement of JPA

@@ -36,7 +36,7 @@ public class JobController {
     @PostMapping
     public ResponseEntity<String> addJob(@RequestBody Job job) {
         boolean isJobAdded = jobService.addJob(job);
-        Company company= job.getCompany(); //get Company here
+        Company company = job.getCompany(); //get Company here
         if (isJobAdded) {
             return new ResponseEntity<>("Job added Successfully",
                     HttpStatus.OK);
@@ -66,23 +66,25 @@ public class JobController {
             return new ResponseEntity<>("Job was not updated successfully", HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping("/{id}/{title}")
-    public ResponseEntity<Job> fetchJob(@PathVariable int id, @PathVariable String title){
+    public ResponseEntity<Job> fetchJob(@PathVariable int id, @PathVariable String title) {
         Job fetchJob = jobService.fetchJob(id, title);
 
-        if(fetchJob!= null){
-            return new ResponseEntity<>(fetchJob,HttpStatus.OK);
-        }else{
+        if (fetchJob != null) {
+            return new ResponseEntity<>(fetchJob, HttpStatus.OK);
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     @PatchMapping("/{id}")
-    public ResponseEntity<String> patchJob(@PathVariable int id,@RequestBody Job patchJob){
-        boolean isPatched = jobService.patchJob(id,patchJob);
-        if(isPatched){
-            return new  ResponseEntity<>("Job Patched Successfully", HttpStatus.OK);
-        }else{
-            return new  ResponseEntity<>("Job Was Not Updated",HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> patchJob(@PathVariable int id, @RequestBody Job patchJob) {
+        boolean isPatched = jobService.patchJob(id, patchJob);
+        if (isPatched) {
+            return new ResponseEntity<>("Job Patched Successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Job Was Not Updated", HttpStatus.BAD_REQUEST);
         }
     }
 }

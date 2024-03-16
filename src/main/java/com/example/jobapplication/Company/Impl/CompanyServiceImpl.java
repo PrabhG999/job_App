@@ -37,6 +37,8 @@ public class CompanyServiceImpl implements CompanyService {
             Company company = companyOptional.get();
             company.setName(updateCompany.getName());
             company.setDescription(updateCompany.getDescription());
+            companyRepository.save(company);
+            return true;
         }
         return false;
     }
@@ -50,8 +52,8 @@ public class CompanyServiceImpl implements CompanyService {
                     job.setCompany(company);
                 }
             }
-            if (company.getReview() != null) {
-                for (Review review : company.getReview()) {
+            if (company.getReviews() != null) {
+                for (Review review : company.getReviews()) {
                     review.setCompany(company);
                 }
             }
