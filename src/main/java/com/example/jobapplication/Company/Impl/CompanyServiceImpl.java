@@ -40,7 +40,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public boolean updateCompany(int id, @RequestBody Company updateCompany) {
+    public boolean updateCompany(int id,  Company updateCompany) {
         Optional<Company> companyOptional = companyRepository.findById(id);
         if (companyOptional.isPresent()) {
             Company company = companyOptional.get();
@@ -105,7 +105,7 @@ public class CompanyServiceImpl implements CompanyService {
 
 
     @Override
-    public boolean patchCompany(int id, @RequestBody Company company) {
+    public boolean patchCompany(int id,  Company company) {
         Optional<Company> companyOptional = companyRepository.findById(id);
         if (companyOptional.isPresent()) {
             Company existingCompany = companyOptional.get();
