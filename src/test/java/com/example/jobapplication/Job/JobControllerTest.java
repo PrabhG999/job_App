@@ -57,8 +57,8 @@ public class JobControllerTest {
         Mockito.when(jobService.addJob(Mockito.any(Job.class))).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/jobs")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\":\"Software Engineer\",\"description\":\"Develop software\",\"minSalary\":50000,\"maxSalary\":100000,\"location\":\"New York\"}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Software Engineer\",\"description\":\"Develop software\",\"minSalary\":50000,\"maxSalary\":100000,\"location\":\"New York\"}"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("Job added Successfully"));
     }
@@ -78,8 +78,8 @@ public class JobControllerTest {
         Mockito.when(jobService.updateJob(Mockito.eq(1), Mockito.any(Job.class))).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/jobs/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\":\"Software Engineer\",\"description\":\"Develop software\",\"minSalary\":60000,\"maxSalary\":120000,\"location\":\"New York\"}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Software Engineer\",\"description\":\"Develop software\",\"minSalary\":60000,\"maxSalary\":120000,\"location\":\"New York\"}"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("Job Updated Successfully"));
     }
@@ -100,8 +100,8 @@ public class JobControllerTest {
         Mockito.when(jobService.patchJob(Mockito.eq(1), Mockito.any(Job.class))).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/jobs/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\":\"Software Engineer\",\"description\":\"Develop software\",\"minSalary\":50000,\"maxSalary\":100000,\"location\":\"New York\"}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Software Engineer\",\"description\":\"Develop software\",\"minSalary\":50000,\"maxSalary\":100000,\"location\":\"New York\"}"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("Job Patched Successfully"));
     }

@@ -42,7 +42,7 @@ public class ReviewControllerTest {
 
     @Test
     public void testGetAllReviewsWhenNoReviewsThenReturnEmptyList() throws Exception {
-        when(reviewService.getAllReviews()).thenReturn(Arrays.asList());
+        when(reviewService.getAllReviews()).thenReturn(List.of());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/companies/{id}/reviews", 1))
                 .andExpect(status().isOk())

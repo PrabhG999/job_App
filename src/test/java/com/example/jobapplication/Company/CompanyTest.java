@@ -2,9 +2,9 @@ package com.example.jobapplication.Company;
 
 import com.example.jobapplication.Job.Job;
 import com.example.jobapplication.Review.Review;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
 
 import java.util.ArrayList;
 import java.util.List;

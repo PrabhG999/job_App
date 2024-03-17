@@ -3,8 +3,8 @@ package com.example.jobapplication.Job;
 import com.example.jobapplication.Company.Company;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class JobTest {
 

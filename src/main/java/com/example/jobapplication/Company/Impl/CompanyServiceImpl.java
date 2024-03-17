@@ -9,7 +9,6 @@ import com.example.jobapplication.Review.Review;
 import com.example.jobapplication.Review.ReviewRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +39,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public boolean updateCompany(int id,  Company updateCompany) {
+    public boolean updateCompany(int id, Company updateCompany) {
         Optional<Company> companyOptional = companyRepository.findById(id);
         if (companyOptional.isPresent()) {
             Company company = companyOptional.get();
@@ -105,7 +104,7 @@ public class CompanyServiceImpl implements CompanyService {
 
 
     @Override
-    public boolean patchCompany(int id,  Company company) {
+    public boolean patchCompany(int id, Company company) {
         Optional<Company> companyOptional = companyRepository.findById(id);
         if (companyOptional.isPresent()) {
             Company existingCompany = companyOptional.get();
