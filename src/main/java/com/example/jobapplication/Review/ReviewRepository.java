@@ -2,6 +2,6 @@ package com.example.jobapplication.Review;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ReviewRepository extends JpaRepository<Review,Integer> {
+public interface ReviewRepository extends JpaRepository<Review, Integer> {
     //TODO : Define special functions which are not preBuilt in JPA Repo /CRUD REPO
 }

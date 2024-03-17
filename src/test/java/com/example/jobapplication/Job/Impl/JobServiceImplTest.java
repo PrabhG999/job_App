@@ -1,380 +1,223 @@
 package com.example.jobapplication.Job.Impl;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import com.example.jobapplication.Company.Company;
 import com.example.jobapplication.Job.Job;
 import com.example.jobapplication.Job.JobRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.aot.DisabledInAotMode;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@ContextConfiguration(classes = {JobServiceImpl.class})
-@ExtendWith(SpringExtension.class)
-@DisabledInAotMode
-class JobServiceImplTest {
-    @MockBean
+@ExtendWith(MockitoExtension.class)
+public class JobServiceImplTest {
+
+    @Mock
     private JobRepository jobRepository;
 
-    @Autowired
-    private JobServiceImpl jobServiceImpl;
+    @InjectMocks
+    private JobServiceImpl jobService;
 
-    /**
-     * Method under test: {@link JobServiceImpl#findAll()}
-     */
-    @Test
-    void testFindAll() {
-        // Arrange
-        ArrayList<Job> jobList = new ArrayList<>();
-        when(jobRepository.findAll()).thenReturn(jobList);
+    private Job job;
 
-        // Act
-        List<Job> actualFindAllResult = jobServiceImpl.findAll();
-
-        // Assert
-        verify(jobRepository).findAll();
-        assertTrue(actualFindAllResult.isEmpty());
-        assertSame(jobList, actualFindAllResult);
+    @BeforeEach
+    void setUp() {
+        job = new Job(1, "Software Engineer", "Develop software applications", 60000, 120000, "New York");
     }
 
-    /**
-     * Method under test: {@link JobServiceImpl#getJobById(int)}
-     */
     @Test
-    void testGetJobById() {
+    void testFindAllWhenJobsExistThenReturnListOfJobs() {
         // Arrange
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
-
-        Job job = new Job();
-        job.setCompany(company);
-        job.setDescription("The characteristics of someone or something");
-        job.setId(1);
-        job.setLocation("Location");
-        job.setMaxSalary(10.0d);
-        job.setMinSalary(10.0d);
-        job.setTitle("Dr");
-        Optional<Job> ofResult = Optional.of(job);
-        when(jobRepository.findById(Mockito.<Integer>any())).thenReturn(ofResult);
+        when(jobRepository.findAll()).thenReturn(Collections.singletonList(job));
 
         // Act
-        Job actualJobById = jobServiceImpl.getJobById(1);
+        List<Job> jobs = jobService.findAll();
 
         // Assert
-        verify(jobRepository).findById(Mockito.<Integer>any());
-        assertSame(job, actualJobById);
+        assertFalse(jobs.isEmpty());
+        assertEquals(1, jobs.size());
+        assertEquals(job, jobs.get(0));
     }
 
-    /**
-     * Method under test: {@link JobServiceImpl#addJob(Job)}
-     */
     @Test
-    void testAddJob() {
+    void testFindAllWhenNoJobsThenReturnEmptyList() {
         // Arrange
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
-
-        Job job = new Job();
-        job.setCompany(company);
-        job.setDescription("The characteristics of someone or something");
-        job.setId(1);
-        job.setLocation("Location");
-        job.setMaxSalary(10.0d);
-        job.setMinSalary(10.0d);
-        job.setTitle("Dr");
-        when(jobRepository.save(Mockito.<Job>any())).thenReturn(job);
-
-        Company company2 = new Company();
-        company2.setDescription("The characteristics of someone or something");
-        company2.setId(1);
-        company2.setJobs(new ArrayList<>());
-        company2.setName("Name");
-        company2.setReview(new ArrayList<>());
-
-        Job job2 = new Job();
-        job2.setCompany(company2);
-        job2.setDescription("The characteristics of someone or something");
-        job2.setId(1);
-        job2.setLocation("Location");
-        job2.setMaxSalary(10.0d);
-        job2.setMinSalary(10.0d);
-        job2.setTitle("Dr");
+        when(jobRepository.findAll()).thenReturn(Collections.emptyList());
 
         // Act
-        boolean actualAddJobResult = jobServiceImpl.addJob(job2);
+        List<Job> jobs = jobService.findAll();
 
         // Assert
-        verify(jobRepository).save(Mockito.<Job>any());
-        assertTrue(actualAddJobResult);
+        assertTrue(jobs.isEmpty());
     }
 
-    /**
-     * Method under test: {@link JobServiceImpl#deleteJob(int)}
-     */
     @Test
-    void testDeleteJob() {
+    void testGetJobByIdWhenJobExistsThenReturnJob() {
         // Arrange
-        doNothing().when(jobRepository).deleteById(Mockito.<Integer>any());
+        when(jobRepository.findById(job.getId())).thenReturn(Optional.of(job));
 
         // Act
-        boolean actualDeleteJobResult = jobServiceImpl.deleteJob(1);
+        Job foundJob = jobService.getJobById(job.getId());
 
         // Assert
-        verify(jobRepository).deleteById(Mockito.<Integer>any());
-        assertTrue(actualDeleteJobResult);
+        assertNotNull(foundJob);
+        assertEquals(job, foundJob);
     }
 
-    /**
-     * Method under test: {@link JobServiceImpl#updateJob(int, Job)}
-     */
     @Test
-    void testUpdateJob() {
+    void testGetJobByIdWhenJobDoesNotExistThenReturnNull() {
         // Arrange
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
-
-        Job job = new Job();
-        job.setCompany(company);
-        job.setDescription("The characteristics of someone or something");
-        job.setId(1);
-        job.setLocation("Location");
-        job.setMaxSalary(10.0d);
-        job.setMinSalary(10.0d);
-        job.setTitle("Dr");
-        Optional<Job> ofResult = Optional.of(job);
-
-        Company company2 = new Company();
-        company2.setDescription("The characteristics of someone or something");
-        company2.setId(1);
-        company2.setJobs(new ArrayList<>());
-        company2.setName("Name");
-        company2.setReview(new ArrayList<>());
-
-        Job job2 = new Job();
-        job2.setCompany(company2);
-        job2.setDescription("The characteristics of someone or something");
-        job2.setId(1);
-        job2.setLocation("Location");
-        job2.setMaxSalary(10.0d);
-        job2.setMinSalary(10.0d);
-        job2.setTitle("Dr");
-        when(jobRepository.save(Mockito.<Job>any())).thenReturn(job2);
-        when(jobRepository.findById(Mockito.<Integer>any())).thenReturn(ofResult);
-
-        Company company3 = new Company();
-        company3.setDescription("The characteristics of someone or something");
-        company3.setId(1);
-        company3.setJobs(new ArrayList<>());
-        company3.setName("Name");
-        company3.setReview(new ArrayList<>());
-
-        Job updatedJob = new Job();
-        updatedJob.setCompany(company3);
-        updatedJob.setDescription("The characteristics of someone or something");
-        updatedJob.setId(1);
-        updatedJob.setLocation("Location");
-        updatedJob.setMaxSalary(10.0d);
-        updatedJob.setMinSalary(10.0d);
-        updatedJob.setTitle("Dr");
+        when(jobRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         // Act
-        boolean actualUpdateJobResult = jobServiceImpl.updateJob(1, updatedJob);
+        Job foundJob = jobService.getJobById(999);
 
         // Assert
-        verify(jobRepository).findById(Mockito.<Integer>any());
-        verify(jobRepository).save(Mockito.<Job>any());
-        assertTrue(actualUpdateJobResult);
+        assertNull(foundJob);
     }
 
-    /**
-     * Method under test: {@link JobServiceImpl#updateJob(int, Job)}
-     */
     @Test
-    void testUpdateJob2() {
+    void testAddJobWhenValidJobThenSaveJob() {
         // Arrange
-        Optional<Job> emptyResult = Optional.empty();
-        when(jobRepository.findById(Mockito.<Integer>any())).thenReturn(emptyResult);
-
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
-
-        Job updatedJob = new Job();
-        updatedJob.setCompany(company);
-        updatedJob.setDescription("The characteristics of someone or something");
-        updatedJob.setId(1);
-        updatedJob.setLocation("Location");
-        updatedJob.setMaxSalary(10.0d);
-        updatedJob.setMinSalary(10.0d);
-        updatedJob.setTitle("Dr");
+        when(jobRepository.save(any(Job.class))).thenReturn(job);
 
         // Act
-        boolean actualUpdateJobResult = jobServiceImpl.updateJob(1, updatedJob);
+        boolean result = jobService.addJob(job);
 
         // Assert
-        verify(jobRepository).findById(Mockito.<Integer>any());
-        assertFalse(actualUpdateJobResult);
+        assertTrue(result);
+        verify(jobRepository).save(job);
     }
 
-    /**
-     * Method under test: {@link JobServiceImpl#fetchJob(int, String)}
-     */
     @Test
-    void testFetchJob() {
-        // Arrange
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
+    void testAddJobWhenNullJobThenDoNotSaveJob() {
+        // Act
+        boolean result = jobService.addJob(null);
 
-        Job job = new Job();
-        job.setCompany(company);
-        job.setDescription("The characteristics of someone or something");
-        job.setId(1);
-        job.setLocation("Location");
-        job.setMaxSalary(10.0d);
-        job.setMinSalary(10.0d);
-        job.setTitle("Dr");
-        when(jobRepository.findByIdAndTitle(anyInt(), Mockito.<String>any())).thenReturn(job);
+        // Assert
+        assertFalse(result);
+        verify(jobRepository, never()).save(any(Job.class));
+    }
+
+    @Test
+    void testDeleteJobWhenJobExistsThenDeleteJob() {
+        // Arrange
+        doNothing().when(jobRepository).deleteById(job.getId());
 
         // Act
-        Job actualFetchJobResult = jobServiceImpl.fetchJob(1, "Dr");
+        boolean result = jobService.deleteJob(job.getId());
 
         // Assert
-        verify(jobRepository).findByIdAndTitle(eq(1), eq("Dr"));
-        assertSame(job, actualFetchJobResult);
+        assertTrue(result);
+        verify(jobRepository).deleteById(job.getId());
     }
 
-    /**
-     * Method under test: {@link JobServiceImpl#patchJob(int, Job)}
-     */
     @Test
-    void testPatchJob() {
+    void testDeleteJobWhenJobDoesNotExistThenDoNotDeleteJob() {
         // Arrange
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
+        doThrow(new RuntimeException()).when(jobRepository).deleteById(anyInt());
 
-        Job job = new Job();
-        job.setCompany(company);
-        job.setDescription("The characteristics of someone or something");
-        job.setId(1);
-        job.setLocation("Location");
-        job.setMaxSalary(10.0d);
-        job.setMinSalary(10.0d);
-        job.setTitle("Dr");
-        Optional<Job> ofResult = Optional.of(job);
+        // Act
+        boolean result = jobService.deleteJob(999);
 
-        Company company2 = new Company();
-        company2.setDescription("The characteristics of someone or something");
-        company2.setId(1);
-        company2.setJobs(new ArrayList<>());
-        company2.setName("Name");
-        company2.setReview(new ArrayList<>());
+        // Assert
+        assertFalse(result);
+        verify(jobRepository).deleteById(999);
+    }
 
-        Job job2 = new Job();
-        job2.setCompany(company2);
-        job2.setDescription("The characteristics of someone or something");
-        job2.setId(1);
-        job2.setLocation("Location");
-        job2.setMaxSalary(10.0d);
-        job2.setMinSalary(10.0d);
-        job2.setTitle("Dr");
-        when(jobRepository.save(Mockito.<Job>any())).thenReturn(job2);
-        when(jobRepository.findById(Mockito.<Integer>any())).thenReturn(ofResult);
+    @Test
+    void testUpdateJobWhenJobExistsThenUpdateJob() {
+        // Arrange
+        when(jobRepository.findById(job.getId())).thenReturn(Optional.of(job));
+        when(jobRepository.save(any(Job.class))).thenReturn(job);
 
-        Company company3 = new Company();
-        company3.setDescription("The characteristics of someone or something");
-        company3.setId(1);
-        company3.setJobs(new ArrayList<>());
-        company3.setName("Name");
-        company3.setReview(new ArrayList<>());
+        Job updatedJob = new Job(job.getId(), "Updated Title", "Updated Description", 70000, 130000, "Boston");
+
+        // Act
+        boolean result = jobService.updateJob(job.getId(), updatedJob);
+
+        // Assert
+        assertTrue(result);
+        verify(jobRepository).save(job);
+    }
+
+    @Test
+    void testUpdateJobWhenJobDoesNotExistThenDoNotUpdateJob() {
+        // Arrange
+        when(jobRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        Job updatedJob = new Job(999, "Updated Title", "Updated Description", 70000, 130000, "Boston");
+
+        // Act
+        boolean result = jobService.updateJob(999, updatedJob);
+
+        // Assert
+        assertFalse(result);
+        verify(jobRepository, never()).save(any(Job.class));
+    }
+
+    @Test
+    void testFetchJobWhenJobExistsThenReturnJob() {
+        // Arrange
+        when(jobRepository.findByIdAndTitle(job.getId(), job.getTitle())).thenReturn(job);
+
+        // Act
+        Job foundJob = jobService.fetchJob(job.getId(), job.getTitle());
+
+        // Assert
+        assertNotNull(foundJob);
+        assertEquals(job, foundJob);
+    }
+
+    @Test
+    void testFetchJobWhenJobDoesNotExistThenReturnNull() {
+        // Arrange
+        when(jobRepository.findByIdAndTitle(anyInt(), anyString())).thenReturn(null);
+
+        // Act
+        Job foundJob = jobService.fetchJob(999, "Nonexistent Title");
+
+        // Assert
+        assertNull(foundJob);
+    }
+
+    @Test
+    void testPatchJobWhenJobExistsThenPatchJob() {
+        // Arrange
+        when(jobRepository.findById(job.getId())).thenReturn(Optional.of(job));
+        when(jobRepository.save(any(Job.class))).thenReturn(job);
 
         Job patchJob = new Job();
-        patchJob.setCompany(company3);
-        patchJob.setDescription("The characteristics of someone or something");
-        patchJob.setId(1);
-        patchJob.setLocation("Location");
-        patchJob.setMaxSalary(10.0d);
-        patchJob.setMinSalary(10.0d);
-        patchJob.setTitle("Dr");
+        patchJob.setTitle("Patched Title");
 
         // Act
-        boolean actualPatchJobResult = jobServiceImpl.patchJob(1, patchJob);
+        boolean result = jobService.patchJob(job.getId(), patchJob);
 
         // Assert
-        verify(jobRepository).findById(Mockito.<Integer>any());
-        verify(jobRepository).save(Mockito.<Job>any());
-        assertTrue(actualPatchJobResult);
+        assertTrue(result);
+        verify(jobRepository).save(job);
     }
 
-    /**
-     * Method under test: {@link JobServiceImpl#patchJob(int, Job)}
-     */
     @Test
-    void testPatchJob2() {
+    void testPatchJobWhenJobDoesNotExistThenDoNotPatchJob() {
         // Arrange
-        Optional<Job> emptyResult = Optional.empty();
-        when(jobRepository.findById(Mockito.<Integer>any())).thenReturn(emptyResult);
-
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
+        when(jobRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         Job patchJob = new Job();
-        patchJob.setCompany(company);
-        patchJob.setDescription("The characteristics of someone or something");
-        patchJob.setId(1);
-        patchJob.setLocation("Location");
-        patchJob.setMaxSalary(10.0d);
-        patchJob.setMinSalary(10.0d);
-        patchJob.setTitle("Dr");
+        patchJob.setTitle("Patched Title");
 
         // Act
-        boolean actualPatchJobResult = jobServiceImpl.patchJob(1, patchJob);
+        boolean result = jobService.patchJob(999, patchJob);
 
         // Assert
-        verify(jobRepository).findById(Mockito.<Integer>any());
-        assertFalse(actualPatchJobResult);
+        assertFalse(result);
+        verify(jobRepository, never()).save(any(Job.class));
     }
 }

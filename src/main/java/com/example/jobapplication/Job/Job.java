@@ -8,6 +8,10 @@ import jakarta.persistence.*;
 //class supposed to be mapped to a table , the table name is same as class , make constructor and set primary key.
 @Table(name = "Job")
 public class Job {
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    @JsonIgnoreProperties("jobs")
+    private Company company;
     //info we need to store for the JOB + Contractor and then getter setters
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +22,6 @@ public class Job {
     private double maxSalary;
     private String location;
 
-    @ManyToOne
-    @JsonIgnoreProperties("jobs")
-    private Company company;
     public Job() {
         //need a default constructor for Entity in JPA
         //Why ? - Entity are Objects that represent the persistent data in DB - Requirement of JPA

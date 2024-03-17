@@ -1,385 +1,108 @@
 package com.example.jobapplication.Job;
 
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.when;
-
-import com.example.jobapplication.Company.Company;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.ArrayList;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.aot.DisabledInAotMode;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@ContextConfiguration(classes = {JobController.class})
+import java.util.Arrays;
+import java.util.List;
+
 @ExtendWith(SpringExtension.class)
-@DisabledInAotMode
-class JobControllerTest {
+@WebMvcTest(JobController.class)
+public class JobControllerTest {
+
     @Autowired
-    private JobController jobController;
+    private MockMvc mockMvc;
 
     @MockBean
     private JobService jobService;
 
-    /**
-     * Method under test: {@link JobController#findAll()}
-     */
     @Test
-    void testFindAll() throws Exception {
-        // Arrange
-        when(jobService.findAll()).thenReturn(new ArrayList<>());
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/jobs");
+    public void testFindAllWhenCalledThenReturnListOfJobs() throws Exception {
+        List<Job> jobs = Arrays.asList(
+                new Job(1, "Software Engineer", "Develop software", 50000, 100000, "New York"),
+                new Job(2, "QA Engineer", "Test software", 40000, 80000, "San Francisco")
+        );
+        Mockito.when(jobService.findAll()).thenReturn(jobs);
 
-        // Act and Assert
-        MockMvcBuilders.standaloneSetup(jobController)
-                .build()
-                .perform(requestBuilder)
+        mockMvc.perform(MockMvcRequestBuilders.get("/jobs"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.content().string("[]"));
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(jobs.get(0).getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(jobs.get(1).getId()));
     }
 
-    /**
-     * Method under test: {@link JobController#addJob(Job)}
-     */
     @Test
-    void testAddJob() throws Exception {
-        // Arrange
-        when(jobService.addJob(Mockito.<Job>any())).thenReturn(true);
+    public void testGetJobByIdWhenCalledThenReturnJob() throws Exception {
+        Job job = new Job(1, "Software Engineer", "Develop software", 50000, 100000, "New York");
+        Mockito.when(jobService.getJobById(1)).thenReturn(job);
 
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
-
-        Job job = new Job();
-        job.setCompany(company);
-        job.setDescription("The characteristics of someone or something");
-        job.setId(1);
-        job.setLocation("Location");
-        job.setMaxSalary(10.0d);
-        job.setMinSalary(10.0d);
-        job.setTitle("Dr");
-        String content = (new ObjectMapper()).writeValueAsString(job);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/jobs")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content);
-
-        // Act and Assert
-        MockMvcBuilders.standaloneSetup(jobController)
-                .build()
-                .perform(requestBuilder)
+        mockMvc.perform(MockMvcRequestBuilders.get("/jobs/{id}", 1))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=ISO-8859-1"))
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(job.getId()));
+    }
+
+    @Test
+    public void testAddJobWhenCalledThenReturnSuccessMessage() throws Exception {
+        Job job = new Job(1, "Software Engineer", "Develop software", 50000, 100000, "New York");
+        Mockito.when(jobService.addJob(Mockito.any(Job.class))).thenReturn(true);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/jobs")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"Software Engineer\",\"description\":\"Develop software\",\"minSalary\":50000,\"maxSalary\":100000,\"location\":\"New York\"}"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("Job added Successfully"));
     }
 
-    /**
-     * Method under test: {@link JobController#addJob(Job)}
-     */
     @Test
-    void testAddJob2() throws Exception {
-        // Arrange
-        when(jobService.addJob(Mockito.<Job>any())).thenReturn(false);
+    public void testDeleteJobWhenCalledThenReturnSuccessMessage() throws Exception {
+        Mockito.when(jobService.deleteJob(1)).thenReturn(true);
 
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
-
-        Job job = new Job();
-        job.setCompany(company);
-        job.setDescription("The characteristics of someone or something");
-        job.setId(1);
-        job.setLocation("Location");
-        job.setMaxSalary(10.0d);
-        job.setMinSalary(10.0d);
-        job.setTitle("Dr");
-        String content = (new ObjectMapper()).writeValueAsString(job);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/jobs")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content);
-
-        // Act
-        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(jobController).build().perform(requestBuilder);
-
-        // Assert
-        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(406))
-                .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=ISO-8859-1"))
-                .andExpect(MockMvcResultMatchers.content().string("Job was not added Successfully"));
-    }
-
-    /**
-     * Method under test: {@link JobController#deleteJob(int)}
-     */
-    @Test
-    void testDeleteJob() throws Exception {
-        // Arrange
-        when(jobService.deleteJob(anyInt())).thenReturn(true);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/jobs/{id}", 1);
-
-        // Act and Assert
-        MockMvcBuilders.standaloneSetup(jobController)
-                .build()
-                .perform(requestBuilder)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/jobs/{id}", 1))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=ISO-8859-1"))
                 .andExpect(MockMvcResultMatchers.content().string("The Job is deleted Successfully"));
     }
 
-    /**
-     * Method under test: {@link JobController#deleteJob(int)}
-     */
     @Test
-    void testDeleteJob2() throws Exception {
-        // Arrange
-        when(jobService.deleteJob(anyInt())).thenReturn(false);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/jobs/{id}", 1);
+    public void testUpdateJobWhenCalledThenReturnSuccessMessage() throws Exception {
+        Job updatedJob = new Job(1, "Software Engineer", "Develop software", 60000, 120000, "New York");
+        Mockito.when(jobService.updateJob(Mockito.eq(1), Mockito.any(Job.class))).thenReturn(true);
 
-        // Act
-        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(jobController).build().perform(requestBuilder);
-
-        // Assert
-        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(400))
-                .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=ISO-8859-1"))
-                .andExpect(MockMvcResultMatchers.content().string("Job Was Not Deleted , Please check the ID exists or not"));
-    }
-
-    /**
-     * Method under test: {@link JobController#updateJob(int, Job)}
-     */
-    @Test
-    void testUpdateJob() throws Exception {
-        // Arrange
-        when(jobService.updateJob(anyInt(), Mockito.<Job>any())).thenReturn(true);
-
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
-
-        Job job = new Job();
-        job.setCompany(company);
-        job.setDescription("The characteristics of someone or something");
-        job.setId(1);
-        job.setLocation("Location");
-        job.setMaxSalary(10.0d);
-        job.setMinSalary(10.0d);
-        job.setTitle("Dr");
-        String content = (new ObjectMapper()).writeValueAsString(job);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/jobs/{id}", 1)
+        mockMvc.perform(MockMvcRequestBuilders.put("/jobs/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content);
-
-        // Act and Assert
-        MockMvcBuilders.standaloneSetup(jobController)
-                .build()
-                .perform(requestBuilder)
+                .content("{\"title\":\"Software Engineer\",\"description\":\"Develop software\",\"minSalary\":60000,\"maxSalary\":120000,\"location\":\"New York\"}"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=ISO-8859-1"))
                 .andExpect(MockMvcResultMatchers.content().string("Job Updated Successfully"));
     }
 
-    /**
-     * Method under test: {@link JobController#updateJob(int, Job)}
-     */
     @Test
-    void testUpdateJob2() throws Exception {
-        // Arrange
-        when(jobService.updateJob(anyInt(), Mockito.<Job>any())).thenReturn(false);
+    public void testFetchJobWhenCalledThenReturnJob() throws Exception {
+        Job job = new Job(1, "Software Engineer", "Develop software", 50000, 100000, "New York");
+        Mockito.when(jobService.fetchJob(1, "Software Engineer")).thenReturn(job);
 
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
-
-        Job job = new Job();
-        job.setCompany(company);
-        job.setDescription("The characteristics of someone or something");
-        job.setId(1);
-        job.setLocation("Location");
-        job.setMaxSalary(10.0d);
-        job.setMinSalary(10.0d);
-        job.setTitle("Dr");
-        String content = (new ObjectMapper()).writeValueAsString(job);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/jobs/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content);
-
-        // Act
-        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(jobController).build().perform(requestBuilder);
-
-        // Assert
-        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(400))
-                .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=ISO-8859-1"))
-                .andExpect(MockMvcResultMatchers.content().string("Job was not updated successfully"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/jobs/{id}/{title}", 1, "Software Engineer"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(job.getId()));
     }
 
-    /**
-     * Method under test: {@link JobController#fetchJob(int, String)}
-     */
     @Test
-    void testFetchJob() throws Exception {
-        // Arrange
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
+    public void testPatchJobWhenCalledThenReturnSuccessMessage() throws Exception {
+        Mockito.when(jobService.patchJob(Mockito.eq(1), Mockito.any(Job.class))).thenReturn(true);
 
-        Job job = new Job();
-        job.setCompany(company);
-        job.setDescription("The characteristics of someone or something");
-        job.setId(1);
-        job.setLocation("Location");
-        job.setMaxSalary(10.0d);
-        job.setMinSalary(10.0d);
-        job.setTitle("Dr");
-        when(jobService.fetchJob(anyInt(), Mockito.<String>any())).thenReturn(job);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/jobs/{id}/{title}", 1, "Dr");
-
-        // Act and Assert
-        MockMvcBuilders.standaloneSetup(jobController)
-                .build()
-                .perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.content()
-                        .string(
-                                "{\"id\":1,\"title\":\"Dr\",\"description\":\"The characteristics of someone or something\",\"minSalary\":10.0,"
-                                        + "\"maxSalary\":10.0,\"location\":\"Location\",\"company\":{\"id\":1,\"name\":\"Name\",\"description\":\"The characteristics"
-                                        + " of someone or something\",\"review\":[]}}"));
-    }
-
-    /**
-     * Method under test: {@link JobController#patchJob(int, Job)}
-     */
-    @Test
-    void testPatchJob() throws Exception {
-        // Arrange
-        when(jobService.patchJob(anyInt(), Mockito.<Job>any())).thenReturn(true);
-
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
-
-        Job job = new Job();
-        job.setCompany(company);
-        job.setDescription("The characteristics of someone or something");
-        job.setId(1);
-        job.setLocation("Location");
-        job.setMaxSalary(10.0d);
-        job.setMinSalary(10.0d);
-        job.setTitle("Dr");
-        String content = (new ObjectMapper()).writeValueAsString(job);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.patch("/jobs/{id}", 1)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/jobs/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content);
-
-        // Act and Assert
-        MockMvcBuilders.standaloneSetup(jobController)
-                .build()
-                .perform(requestBuilder)
+                .content("{\"title\":\"Software Engineer\",\"description\":\"Develop software\",\"minSalary\":50000,\"maxSalary\":100000,\"location\":\"New York\"}"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=ISO-8859-1"))
                 .andExpect(MockMvcResultMatchers.content().string("Job Patched Successfully"));
-    }
-
-    /**
-     * Method under test: {@link JobController#patchJob(int, Job)}
-     */
-    @Test
-    void testPatchJob2() throws Exception {
-        // Arrange
-        when(jobService.patchJob(anyInt(), Mockito.<Job>any())).thenReturn(false);
-
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
-
-        Job job = new Job();
-        job.setCompany(company);
-        job.setDescription("The characteristics of someone or something");
-        job.setId(1);
-        job.setLocation("Location");
-        job.setMaxSalary(10.0d);
-        job.setMinSalary(10.0d);
-        job.setTitle("Dr");
-        String content = (new ObjectMapper()).writeValueAsString(job);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.patch("/jobs/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content);
-
-        // Act
-        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(jobController).build().perform(requestBuilder);
-
-        // Assert
-        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(400))
-                .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=ISO-8859-1"))
-                .andExpect(MockMvcResultMatchers.content().string("Job Was Not Updated"));
-    }
-
-    /**
-     * Method under test: {@link JobController#findAll(int)}
-     */
-    @Test
-    void testFindAll2() throws Exception {
-        // Arrange
-        Company company = new Company();
-        company.setDescription("The characteristics of someone or something");
-        company.setId(1);
-        company.setJobs(new ArrayList<>());
-        company.setName("Name");
-        company.setReview(new ArrayList<>());
-
-        Job job = new Job();
-        job.setCompany(company);
-        job.setDescription("The characteristics of someone or something");
-        job.setId(1);
-        job.setLocation("Location");
-        job.setMaxSalary(10.0d);
-        job.setMinSalary(10.0d);
-        job.setTitle("Dr");
-        when(jobService.getJobById(anyInt())).thenReturn(job);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/jobs/{id}", 1);
-
-        // Act and Assert
-        MockMvcBuilders.standaloneSetup(jobController)
-                .build()
-                .perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.content()
-                        .string(
-                                "{\"id\":1,\"title\":\"Dr\",\"description\":\"The characteristics of someone or something\",\"minSalary\":10.0,"
-                                        + "\"maxSalary\":10.0,\"location\":\"Location\",\"company\":{\"id\":1,\"name\":\"Name\",\"description\":\"The characteristics"
-                                        + " of someone or something\",\"review\":[]}}"));
     }
 }

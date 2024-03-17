@@ -3,6 +3,7 @@ package com.example.jobapplication.Review.Impl;
 import com.example.jobapplication.Review.Review;
 import com.example.jobapplication.Review.ReviewRepository;
 import com.example.jobapplication.Review.ReviewService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import java.util.Optional;
 @Service
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
+
     @Autowired
     public ReviewServiceImpl(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
@@ -24,8 +26,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional
     public boolean addReview(Review review) {
-        if(review!= null){
+        if (review != null) {
             reviewRepository.save(review);
             return true;
         }
@@ -38,9 +41,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public boolean updateReview(int id,@RequestBody Review updateReview) {
+    public boolean updateReview(int id, @RequestBody Review updateReview) {
         Optional<Review> reviewOptional = reviewRepository.findById(id);
-        if(reviewOptional.isPresent()){
+        if (reviewOptional.isPresent()) {
             Review review = reviewOptional.get();
             review.setTitle(updateReview.getTitle());
             review.setDescription(updateReview.getDescription());
@@ -54,26 +57,26 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public boolean deleteReview(int id) {
-       try{
-           reviewRepository.deleteById(id);
-           return true;
-       }catch (Exception e){
-           return false;
-       }
+        try {
+            reviewRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
     public boolean patchReview(int id, @RequestBody Review patchReview) {
         Optional<Review> reviewOptional = reviewRepository.findById(id);
-        if(reviewOptional.isPresent()){
+        if (reviewOptional.isPresent()) {
             Review existingReview = reviewOptional.get();
-            if(patchReview.getTitle()!=null){
+            if (patchReview.getTitle() != null) {
                 existingReview.setTitle(patchReview.getTitle());
             }
-            if(patchReview.getDescription()!=null){
+            if (patchReview.getDescription() != null) {
                 existingReview.setDescription(patchReview.getDescription());
             }
-            if(patchReview.getCompany()!=null){
+            if (patchReview.getCompany() != null) {
                 existingReview.setCompany(patchReview.getCompany());
             }
             reviewRepository.save(existingReview);
