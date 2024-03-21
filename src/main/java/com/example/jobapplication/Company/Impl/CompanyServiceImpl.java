@@ -109,9 +109,6 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public boolean patchCompany(int id,  Company company) {
-        //TODO: ticket 1
-        // TODO: add logic here is wrong paramters coming in throws false as in company @request body should have id,name, description
-        // TODO: try matching the params in a way from @request body that it does not take wrong params in JSON
         Optional<Company> companyOptional = companyRepository.findById(id);
         if (companyOptional.isPresent()) {
             Company existingCompany = companyOptional.get();
@@ -121,6 +118,28 @@ public class CompanyServiceImpl implements CompanyService {
             if (company.getDescription() != null) {
                 existingCompany.setDescription(company.getDescription());
             }
+            // Patch job with id in patch company call 
+            if(company.getJobs()!=null){
+                List<Job> jobsToUpdate = new ArrayList<>();
+                for(Job job: company.getJobs()){
+                    jobRepository.findById(job.getId()).ifPresent(existingJob -> {
+                        existingJob.setCompany(existingCompany); 
+                        jobsToUpdate.add(existingJob);
+                    });
+                }
+                existingCompany.setJobs(jobsToUpdate);
+            }
+            if(company.getReviews()!=null){
+                List<Review> reviewsToUpdate = new ArrayList<>();
+                for(Review review: company.getReviews()){
+                    reviewRepository.findById(review.getId()).ifPresent(existingReview -> {
+                        existingReview.setCompany(existingCompany); // Update review's company reference
+                        reviewsToUpdate.add(existingReview);
+                    });
+                }
+                existingCompany.setReviews(reviewsToUpdate);
+            }
+            
             companyRepository.save(existingCompany);
             return true;
         }
