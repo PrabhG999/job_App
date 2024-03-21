@@ -55,6 +55,9 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public boolean addCompany(Company company) {
+        //TODO : ticket 2
+        // Kind of think of a logic where you can create a company using POST and
+        // then add job and reviews to it ! on a separate post call bcs company with a unique id is already generated.
         if (company != null) {
             List<Job> jobsToUpdate = new ArrayList<>();
             if (company.getJobs() != null) {
@@ -106,6 +109,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public boolean patchCompany(int id,  Company company) {
+        //TODO: ticket 1
+        // TODO: add logic here is wrong paramters coming in throws false as in company @request body should have id,name, description
+        // TODO: try matching the params in a way from @request body that it does not take wrong params in JSON
         Optional<Company> companyOptional = companyRepository.findById(id);
         if (companyOptional.isPresent()) {
             Company existingCompany = companyOptional.get();

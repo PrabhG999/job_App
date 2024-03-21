@@ -24,6 +24,8 @@ public class ReviewServiceImpl implements ReviewService {
     public List<Review> getAllReviews() {
         return reviewRepository.findAll();
     }
+    // TODO: ticket 3 , when we add company , jobs and reviews and make this call why review heading is missing. (some where in mapping ?)
+
 
     @Override
     @Transactional
@@ -57,6 +59,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public boolean deleteReview(int id) {
+        // TODO :  TICKET 5 delete call not working properly we deleted review 1 , still shows up in the getAll call , should say 404 or NOTFOUND
         try {
             reviewRepository.deleteById(id);
             return true;
@@ -67,6 +70,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public boolean patchReview(int id, @RequestBody Review patchReview) {
+        //TODO : Ticket 4
+        // Check this calls behavior across all related calls and mappings
         Optional<Review> reviewOptional = reviewRepository.findById(id);
         if (reviewOptional.isPresent()) {
             Review existingReview = reviewOptional.get();
