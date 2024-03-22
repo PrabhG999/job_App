@@ -1,5 +1,6 @@
 package com.example.jobapplication.Review.Impl;
 
+import com.example.jobapplication.Company.Company;
 import com.example.jobapplication.Review.Review;
 import com.example.jobapplication.Review.ReviewRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,155 +27,139 @@ public class ReviewServiceImplTest {
     private ReviewServiceImpl reviewService;
 
     private Review review;
+    private Company company;
 
     @BeforeEach
     void setUp() {
-        review = new Review(1, "Great Company", "I had a good experience working here.", 4.5);
+        company = new Company(1, "Test Company", "Description", null, null);
+        review = new Review(1, "Great place to work", "I enjoyed working here", 5.0);
+        review.setCompany(company);
     }
 
     @Test
     void testGetAllReviewsWhenReviewsExistThenReturnReviews() {
-        // Arrange
-        when(reviewRepository.findAll()).thenReturn(List.of(review));
+        List<Review> reviews = List.of(review);
+        when(reviewRepository.findAll()).thenReturn(reviews);
 
-        // Act
-        List<Review> reviews = reviewService.getAllReviews();
+        List<Review> result = reviewService.getAllReviews();
 
-        // Assert
-        assertFalse(reviews.isEmpty());
-        assertEquals(1, reviews.size());
-        assertEquals(review, reviews.get(0));
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(reviews, result);
     }
 
     @Test
     void testGetAllReviewsWhenNoReviewsThenReturnEmptyList() {
-        // Arrange
         when(reviewRepository.findAll()).thenReturn(Collections.emptyList());
 
-        // Act
-        List<Review> reviews = reviewService.getAllReviews();
+        List<Review> result = reviewService.getAllReviews();
 
-        // Assert
-        assertTrue(reviews.isEmpty());
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test
     void testAddReviewWhenValidReviewThenReturnTrue() {
-        // Arrange
         when(reviewRepository.save(any(Review.class))).thenReturn(review);
 
-        // Act
         boolean result = reviewService.addReview(review);
 
-        // Assert
         assertTrue(result);
+        verify(reviewRepository).save(review);
     }
 
     @Test
     void testAddReviewWhenNullReviewThenReturnFalse() {
-        // Act
         boolean result = reviewService.addReview(null);
 
-        // Assert
         assertFalse(result);
+        verify(reviewRepository, never()).save(any(Review.class));
     }
 
     @Test
     void testGetReviewByIdWhenReviewExistsThenReturnReview() {
-        // Arrange
         when(reviewRepository.findById(review.getId())).thenReturn(Optional.of(review));
 
-        // Act
-        Review foundReview = reviewService.getReviewById(review.getId());
+        Review result = reviewService.getReviewById(review.getId());
 
-        // Assert
-        assertNotNull(foundReview);
-        assertEquals(review.getId(), foundReview.getId());
+        assertNotNull(result);
+        assertEquals(review, result);
     }
 
     @Test
     void testGetReviewByIdWhenReviewDoesNotExistThenReturnNull() {
-        // Arrange
         when(reviewRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        // Act
-        Review foundReview = reviewService.getReviewById(1);
+        Review result = reviewService.getReviewById(review.getId());
 
-        // Assert
-        assertNull(foundReview);
+        assertNull(result);
     }
 
     @Test
-    void testUpdateReviewWhenReviewExistsThenReturnTrue() {
-        // Arrange
+    void testUpdateReviewWhenReviewExistsAndValidUpdateThenReturnTrue() {
+        Review updatedReview = new Review(review.getId(), "Updated title", "Updated description", 4.0);
         when(reviewRepository.findById(review.getId())).thenReturn(Optional.of(review));
-        when(reviewRepository.save(any(Review.class))).thenReturn(review);
+        when(reviewRepository.save(any(Review.class))).thenReturn(updatedReview);
 
-        // Act
-        boolean result = reviewService.updateReview(review.getId(), review);
+        boolean result = reviewService.updateReview(review.getId(), updatedReview);
 
-        // Assert
         assertTrue(result);
+        verify(reviewRepository).save(review);
     }
 
     @Test
     void testUpdateReviewWhenReviewDoesNotExistThenReturnFalse() {
-        // Arrange
         when(reviewRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        // Act
-        boolean result = reviewService.updateReview(1, review);
+        boolean result = reviewService.updateReview(review.getId(), review);
 
-        // Assert
         assertFalse(result);
+        verify(reviewRepository, never()).save(any(Review.class));
     }
 
     @Test
     void testDeleteReviewWhenReviewExistsThenReturnTrue() {
-        // Arrange
-        doNothing().when(reviewRepository).deleteById(anyInt());
+        when(reviewRepository.findById(review.getId())).thenReturn(Optional.of(review));
+        doNothing().when(reviewRepository).delete(review);
 
-        // Act
         boolean result = reviewService.deleteReview(review.getId());
 
-        // Assert
         assertTrue(result);
+        verify(reviewRepository).delete(review);
     }
 
     @Test
     void testDeleteReviewWhenReviewDoesNotExistThenReturnFalse() {
-        // Arrange
-        doThrow(new RuntimeException()).when(reviewRepository).deleteById(anyInt());
+        when(reviewRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        // Act
         boolean result = reviewService.deleteReview(review.getId());
 
-        // Assert
         assertFalse(result);
+        verify(reviewRepository, never()).delete(any(Review.class));
     }
 
     @Test
-    void testPatchReviewWhenReviewExistsThenReturnTrue() {
-        // Arrange
+    void testPatchReviewWhenReviewExistsAndValidPatchThenReturnTrue() {
+        Review patchReview = new Review();
+        patchReview.setTitle("Patched title");
         when(reviewRepository.findById(review.getId())).thenReturn(Optional.of(review));
         when(reviewRepository.save(any(Review.class))).thenReturn(review);
 
-        // Act
-        boolean result = reviewService.patchReview(review.getId(), review);
+        boolean result = reviewService.patchReview(review.getId(), patchReview);
 
-        // Assert
         assertTrue(result);
+        verify(reviewRepository).save(review);
     }
 
     @Test
     void testPatchReviewWhenReviewDoesNotExistThenReturnFalse() {
-        // Arrange
+        Review patchReview = new Review();
+        patchReview.setTitle("Patched title");
         when(reviewRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        // Act
-        boolean result = reviewService.patchReview(1, review);
+        boolean result = reviewService.patchReview(review.getId(), patchReview);
 
-        // Assert
         assertFalse(result);
+        verify(reviewRepository, never()).save(any(Review.class));
     }
 }

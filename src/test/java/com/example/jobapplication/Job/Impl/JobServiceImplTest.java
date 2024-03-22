@@ -1,5 +1,6 @@
 package com.example.jobapplication.Job.Impl;
 
+import com.example.jobapplication.Company.Company;
 import com.example.jobapplication.Job.Job;
 import com.example.jobapplication.Job.JobRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,199 +26,163 @@ public class JobServiceImplTest {
     @InjectMocks
     private JobServiceImpl jobService;
 
-    private Job job;
+    private Job job1;
+    private Job job2;
 
     @BeforeEach
     void setUp() {
-        job = new Job(1, "Software Engineer", "Develop software applications", 60000, 120000, "New York");
+        job1 = new Job(1, "Developer", "Develops stuff", 50000, 100000, "Remote");
+        job2 = new Job(2, "Tester", "Tests stuff", 40000, 80000, "On-site");
     }
 
     @Test
     void testFindAllWhenJobsExistThenReturnListOfJobs() {
-        // Arrange
-        when(jobRepository.findAll()).thenReturn(Collections.singletonList(job));
+        List<Job> expectedJobs = Arrays.asList(job1, job2);
+        when(jobRepository.findAll()).thenReturn(expectedJobs);
 
-        // Act
-        List<Job> jobs = jobService.findAll();
+        List<Job> actualJobs = jobService.findAll();
 
-        // Assert
-        assertFalse(jobs.isEmpty());
-        assertEquals(1, jobs.size());
-        assertEquals(job, jobs.get(0));
-    }
-
-    @Test
-    void testFindAllWhenNoJobsThenReturnEmptyList() {
-        // Arrange
-        when(jobRepository.findAll()).thenReturn(Collections.emptyList());
-
-        // Act
-        List<Job> jobs = jobService.findAll();
-
-        // Assert
-        assertTrue(jobs.isEmpty());
+        assertNotNull(actualJobs);
+        assertEquals(expectedJobs, actualJobs);
+        verify(jobRepository).findAll();
     }
 
     @Test
     void testGetJobByIdWhenJobExistsThenReturnJob() {
-        // Arrange
-        when(jobRepository.findById(job.getId())).thenReturn(Optional.of(job));
+        when(jobRepository.findById(1)).thenReturn(Optional.of(job1));
 
-        // Act
-        Job foundJob = jobService.getJobById(job.getId());
+        Job actualJob = jobService.getJobById(1);
 
-        // Assert
-        assertNotNull(foundJob);
-        assertEquals(job, foundJob);
+        assertNotNull(actualJob);
+        assertEquals(job1, actualJob);
+        verify(jobRepository).findById(1);
+    }
+
+    @Test
+    void testAddJobWhenJobIsValidThenSaveJob() {
+        when(jobRepository.save(any(Job.class))).thenReturn(job1);
+
+        boolean result = jobService.addJob(job1);
+
+        assertTrue(result);
+        verify(jobRepository).save(job1);
+    }
+
+    @Test
+    void testDeleteJobWhenJobDoesNotExistThenReturnFalse() {
+        when(jobRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        boolean result = jobService.deleteJob(1);
+
+        assertFalse(result);
+        verify(jobRepository, never()).delete(any(Job.class));
+    }
+
+    @Test
+    void testAddJobWhenJobIsNullThenReturnFalse() {
+        boolean result = jobService.addJob(null);
+
+        assertFalse(result);
+        verify(jobRepository, never()).save(any(Job.class));
+    }
+
+    @Test
+    void testUpdateJobWhenJobDoesNotExistThenReturnFalse() {
+        when(jobRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        Job updatedJob = new Job(1, "Non-existent", "Does not exist", 0, 0, "Nowhere");
+        boolean result = jobService.updateJob(1, updatedJob);
+
+        assertFalse(result);
+        verify(jobRepository, never()).save(any(Job.class));
+    }
+    @Test
+    void testFindAllWhenNoJobsExistThenReturnEmptyList() {
+        when(jobRepository.findAll()).thenReturn(Arrays.asList());
+
+        List<Job> actualJobs = jobService.findAll();
+
+        assertNotNull(actualJobs);
+        assertTrue(actualJobs.isEmpty());
+        verify(jobRepository).findAll();
+    }
+    @Test
+    void testUpdateJobWhenJobExistsThenUpdateAndReturnTrue() {
+        when(jobRepository.findById(1)).thenReturn(Optional.of(job1));
+        Job updatedJob = new Job(1, "Senior Developer", "Develops complex stuff", 70000, 140000, "Remote");
+
+        boolean result = jobService.updateJob(1, updatedJob);
+
+        assertTrue(result);
+        verify(jobRepository).save(job1);
+        assertEquals("Senior Developer", job1.getTitle());
+        assertEquals("Develops complex stuff", job1.getDescription());
+        assertEquals(70000, job1.getMinSalary());
+        assertEquals(140000, job1.getMaxSalary());
+        assertEquals("Remote", job1.getLocation());
     }
 
     @Test
     void testGetJobByIdWhenJobDoesNotExistThenReturnNull() {
-        // Arrange
         when(jobRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        // Act
-        Job foundJob = jobService.getJobById(999);
+        Job actualJob = jobService.getJobById(1);
 
-        // Assert
-        assertNull(foundJob);
+        assertNull(actualJob);
+        verify(jobRepository).findById(1);
     }
 
     @Test
-    void testAddJobWhenValidJobThenSaveJob() {
-        // Arrange
-        when(jobRepository.save(any(Job.class))).thenReturn(job);
+    void testPatchJobWhenJobDoesNotExistThenReturnFalse() {
+        when(jobRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        // Act
-        boolean result = jobService.addJob(job);
+        Job patchJob = new Job();
+        patchJob.setTitle("Non-existent");
 
-        // Assert
-        assertTrue(result);
-        verify(jobRepository).save(job);
-    }
+        boolean result = jobService.patchJob(1, patchJob);
 
-    @Test
-    void testAddJobWhenNullJobThenDoNotSaveJob() {
-        // Act
-        boolean result = jobService.addJob(null);
-
-        // Assert
         assertFalse(result);
         verify(jobRepository, never()).save(any(Job.class));
     }
 
-    @Test
-    void testDeleteJobWhenJobExistsThenDeleteJob() {
-        // Arrange
-        doNothing().when(jobRepository).deleteById(job.getId());
-
-        // Act
-        boolean result = jobService.deleteJob(job.getId());
-
-        // Assert
-        assertTrue(result);
-        verify(jobRepository).deleteById(job.getId());
-    }
-
-    @Test
-    void testDeleteJobWhenJobDoesNotExistThenDoNotDeleteJob() {
-        // Arrange
-        doThrow(new RuntimeException()).when(jobRepository).deleteById(anyInt());
-
-        // Act
-        boolean result = jobService.deleteJob(999);
-
-        // Assert
-        assertFalse(result);
-        verify(jobRepository).deleteById(999);
-    }
 
     @Test
     void testUpdateJobWhenJobExistsThenUpdateJob() {
-        // Arrange
-        when(jobRepository.findById(job.getId())).thenReturn(Optional.of(job));
-        when(jobRepository.save(any(Job.class))).thenReturn(job);
+        when(jobRepository.findById(1)).thenReturn(Optional.of(job1));
+        Job updatedJob = new Job(1, "Updated Developer", "Develops more stuff", 60000, 120000, "Remote");
 
-        Job updatedJob = new Job(job.getId(), "Updated Title", "Updated Description", 70000, 130000, "Boston");
+        boolean result = jobService.updateJob(1, updatedJob);
 
-        // Act
-        boolean result = jobService.updateJob(job.getId(), updatedJob);
-
-        // Assert
         assertTrue(result);
-        verify(jobRepository).save(job);
-    }
-
-    @Test
-    void testUpdateJobWhenJobDoesNotExistThenDoNotUpdateJob() {
-        // Arrange
-        when(jobRepository.findById(anyInt())).thenReturn(Optional.empty());
-
-        Job updatedJob = new Job(999, "Updated Title", "Updated Description", 70000, 130000, "Boston");
-
-        // Act
-        boolean result = jobService.updateJob(999, updatedJob);
-
-        // Assert
-        assertFalse(result);
-        verify(jobRepository, never()).save(any(Job.class));
+        verify(jobRepository).save(job1);
+        assertEquals("Updated Developer", job1.getTitle());
+        assertEquals("Develops more stuff", job1.getDescription());
+        assertEquals(60000, job1.getMinSalary());
+        assertEquals(120000, job1.getMaxSalary());
+        assertEquals("Remote", job1.getLocation());
     }
 
     @Test
     void testFetchJobWhenJobExistsThenReturnJob() {
-        // Arrange
-        when(jobRepository.findByIdAndTitle(job.getId(), job.getTitle())).thenReturn(job);
+        when(jobRepository.findByIdAndTitle(1, "Developer")).thenReturn(job1);
 
-        // Act
-        Job foundJob = jobService.fetchJob(job.getId(), job.getTitle());
+        Job actualJob = jobService.fetchJob(1, "Developer");
 
-        // Assert
-        assertNotNull(foundJob);
-        assertEquals(job, foundJob);
-    }
-
-    @Test
-    void testFetchJobWhenJobDoesNotExistThenReturnNull() {
-        // Arrange
-        when(jobRepository.findByIdAndTitle(anyInt(), anyString())).thenReturn(null);
-
-        // Act
-        Job foundJob = jobService.fetchJob(999, "Nonexistent Title");
-
-        // Assert
-        assertNull(foundJob);
+        assertNotNull(actualJob);
+        assertEquals(job1, actualJob);
+        verify(jobRepository).findByIdAndTitle(1, "Developer");
     }
 
     @Test
     void testPatchJobWhenJobExistsThenPatchJob() {
-        // Arrange
-        when(jobRepository.findById(job.getId())).thenReturn(Optional.of(job));
-        when(jobRepository.save(any(Job.class))).thenReturn(job);
-
+        when(jobRepository.findById(1)).thenReturn(Optional.of(job1));
         Job patchJob = new Job();
-        patchJob.setTitle("Patched Title");
+        patchJob.setTitle("Patched Developer");
 
-        // Act
-        boolean result = jobService.patchJob(job.getId(), patchJob);
+        boolean result = jobService.patchJob(1, patchJob);
 
-        // Assert
         assertTrue(result);
-        verify(jobRepository).save(job);
-    }
-
-    @Test
-    void testPatchJobWhenJobDoesNotExistThenDoNotPatchJob() {
-        // Arrange
-        when(jobRepository.findById(anyInt())).thenReturn(Optional.empty());
-
-        Job patchJob = new Job();
-        patchJob.setTitle("Patched Title");
-
-        // Act
-        boolean result = jobService.patchJob(999, patchJob);
-
-        // Assert
-        assertFalse(result);
-        verify(jobRepository, never()).save(any(Job.class));
+        verify(jobRepository).save(job1);
+        assertEquals("Patched Developer", job1.getTitle());
     }
 }

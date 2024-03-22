@@ -1,8 +1,10 @@
 package com.example.jobapplication.Job.Impl;
 
+import com.example.jobapplication.Company.Company;
 import com.example.jobapplication.Job.Job;
 import com.example.jobapplication.Job.JobRepository;
 import com.example.jobapplication.Job.JobService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,12 +44,16 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Transactional
     public boolean deleteJob(int id) {
-        /*return jobs.removeIf(job -> job.getId() == id);*/ //Lambda Expression to Delete job by id
-        try {
-            jobRepository.deleteById(id);
+        Optional<Job> jobOptional = jobRepository.findById(id);
+        if (jobOptional.isPresent()) {
+            Job job = jobOptional.get();
+            Company company = job.getCompany();
+            company.getJobs().remove(job);
+            jobRepository.delete(job);
             return true;
-        } catch (Exception e) {
+        } else {
             return false;
         }
     }
