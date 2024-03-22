@@ -5,6 +5,7 @@ import com.example.jobapplication.Review.Review;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,7 +20,7 @@ public class Company {
     @JsonIgnoreProperties("company")
     private List<Review> reviews;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //defining aunique id dor Dbase
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private String description;
@@ -31,8 +32,8 @@ public class Company {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.jobs = jobs;
-        this.reviews = reviews;
+        this.jobs = jobs != null ? jobs : new ArrayList<>();
+        this.reviews =reviews != null ? reviews : new ArrayList<>();
     }
 
     public int getId() {
@@ -70,7 +71,6 @@ public class Company {
     public List<Job> getJobs() {
         return jobs;
     }
-
     public void setJobs(List<Job> jobs) {
         this.jobs = jobs;
     }

@@ -1,5 +1,6 @@
 package com.example.jobapplication.Review.Impl;
 
+import com.example.jobapplication.Company.Company;
 import com.example.jobapplication.Review.Review;
 import com.example.jobapplication.Review.ReviewRepository;
 import com.example.jobapplication.Review.ReviewService;
@@ -24,8 +25,6 @@ public class ReviewServiceImpl implements ReviewService {
     public List<Review> getAllReviews() {
         return reviewRepository.findAll();
     }
-    // TODO: ticket 3 , when we add company , jobs and reviews and make this call why review heading is missing. (some where in mapping ?)
-
 
     @Override
     @Transactional
@@ -43,7 +42,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public boolean updateReview(int id, @RequestBody Review updateReview) {
+    public boolean updateReview(int id,  Review updateReview) {
         Optional<Review> reviewOptional = reviewRepository.findById(id);
         if (reviewOptional.isPresent()) {
             Review review = reviewOptional.get();
@@ -58,20 +57,23 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional
     public boolean deleteReview(int id) {
-        // TODO :  TICKET 5 delete call not working properly we deleted review 1 , still shows up in the getAll call , should say 404 or NOTFOUND
-        try {
-            reviewRepository.deleteById(id);
+        Optional<Review> reviewOptional = reviewRepository.findById(id);
+        if (reviewOptional.isPresent()) {
+            Review review = reviewOptional.get();
+            Company company = review.getCompany();
+            company.getReviews().remove(review);
+            reviewRepository.delete(review);
             return true;
-        } catch (Exception e) {
+        } else {
             return false;
         }
     }
 
     @Override
-    public boolean patchReview(int id, @RequestBody Review patchReview) {
-        //TODO : Ticket 4
-        // Check this calls behavior across all related calls and mappings
+    public boolean patchReview(int id, Review patchReview) {
+
         Optional<Review> reviewOptional = reviewRepository.findById(id);
         if (reviewOptional.isPresent()) {
             Review existingReview = reviewOptional.get();

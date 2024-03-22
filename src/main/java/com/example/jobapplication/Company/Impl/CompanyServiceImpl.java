@@ -55,9 +55,6 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public boolean addCompany(Company company) {
-        //TODO : ticket 2
-        // Kind of think of a logic where you can create a company using POST and
-        // then add job and reviews to it ! on a separate post call bcs company with a unique id is already generated.
         if (company != null) {
             List<Job> jobsToUpdate = new ArrayList<>();
             if (company.getJobs() != null) {
